@@ -4,6 +4,7 @@ gemfiles/*.lock
 .bundle
 .config
 .rvmrc
+.ruby-version
 .yardoc
 Gemfile.lock
 InstalledFiles
