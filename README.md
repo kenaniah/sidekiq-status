@@ -3,12 +3,9 @@
 [![Build Status](https://www.travis-ci.com/kenaniah/sidekiq-status.svg?branch=main)](https://www.travis-ci.com/github/kenaniah/sidekiq-status)
 [![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
-An extension to [Sidekiq](https://github.com/mperham/sidekiq) message processing to track your jobs. Inspired
-by [resque-status](https://github.com/quirkey/resque-status) and mostly copying its features, using Sidekiq's middleware.
+Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
-Fully compatible with ActiveJob.
-
-Supports the latest versions of Sidekiq and all the way back to 5.x.
+Requires Ruby 2.6+ and Sidekiq 5.0+ or newer.
 
 ## Installation
 
@@ -18,17 +15,17 @@ Add this line to your application's Gemfile:
 gem 'sidekiq-status'
 ```
 
-And then execute:
-
-```bash
-$ bundle
-```
-
 Or install it yourself as:
 
 ```bash
 gem install sidekiq-status
 ```
+
+### Migrating to Version 2.x from 1.x
+
+Version 2.0.0 was published in order to add support for Ruby 3.0 and Sidekiq 6.x and to remove support for versions of both that are now end-of-life. You should be able to upgrade cleanly from version 1.x to 2.x provided you are running Sidekiq 5.x or newer.
+
+Sidekiq-status version 1.1.4 provides support all the way back to Sidekiq 3.x and was maintained at https://github.com/utgarda/sidekiq-status/.
 
 ## Setup Checklist
 
@@ -61,9 +58,7 @@ Sidekiq.configure_server do |config|
 end
 ```
 
-**Note:** This method of configuration is new as of version 0.8.0.
-
-After that you can use your jobs as usual. You need to also include the `Sidekiq::Status::Worker` module in your jobs if you want the additional functionality of tracking progress and storing / retrieving job data.
+Include the `Sidekiq::Status::Worker` module in your jobs if you want the additional functionality of tracking progress and storing / retrieving job data.
 
 ``` ruby
 class MyJob
@@ -76,7 +71,7 @@ class MyJob
 end
 ```
 
-As of version 0.8.0, _only jobs that include `Sidekiq::Status::Worker`_ will have their statuses tracked. Previous versions of this gem used to track statuses for all jobs, even when `Sidekiq::Status::Worker` was not included.
+Note: _only jobs that include `Sidekiq::Status::Worker`_ will have their statuses tracked.
 
 To overwrite expiration on a per-worker basis, write an expiration method like the one below:
 
@@ -129,7 +124,7 @@ Important: If you try any of the above status method after the expiration time, 
 
 ### ActiveJob Support
 
-Version 0.7.0 has added full support for ActiveJob. The status of ActiveJob jobs will be tracked automatically.
+This gem also supports ActiveJob jobs. Their status will be tracked automatically.
 
 To also enable job progress tracking and data storage features, simply add the  `Sidekiq::Status::Worker` module to your base class, like below:
 
@@ -214,11 +209,11 @@ This gem provides an extension to Sidekiq's web interface with an index at `/sta
 
 ![Sidekiq Status Web](web/sidekiq-status-web.png)
 
-As of 0.7.0, status information for an individual job may be found at `/statuses/:job_id`.
+Information for an individual job may be found at `/statuses/:job_id`.
 
 ![Sidekiq Status Web](web/sidekiq-status-single-web.png)
 
-As of 0.8.0, only jobs that include `Sidekiq::Status::Worker` will be reported in the web interface.
+Note: _only jobs that include `Sidekiq::Status::Worker`_ will be reported in the web interface.
 
 #### Adding the Web Interface
 
