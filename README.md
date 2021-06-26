@@ -23,7 +23,7 @@ gem install sidekiq-status
 
 #### Migrating to Version 2.x from 1.x
 
-Version 2.0.0 was published in order to add support for Ruby 3.0 and Sidekiq 6.x and to remove support for versions of both that are now end-of-life. You should be able to upgrade cleanly from version 1.x to 2.x provided you are running Sidekiq 5.x or newer.
+Version 2.0.0 was published in order to add support for Ruby 3.0 and Sidekiq 6.x and to remove support for versions of both that are now end-of-life. **You should be able to upgrade cleanly from version 1.x to 2.x provided you are running Sidekiq 5.x or newer.**
 
 Sidekiq-status version 1.1.4 provides support all the way back to Sidekiq 3.x and was maintained at https://github.com/utgarda/sidekiq-status/.
 
