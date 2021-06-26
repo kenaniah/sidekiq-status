@@ -1,8 +1,6 @@
 # Sidekiq::Status
 [![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](https://badge.fury.io/rb/sidekiq-status)
-[![Code Climate](https://codeclimate.com/github/kenaniah/sidekiq-status.svg)](https://codeclimate.com/github/kenaniah/sidekiq-status)
 [![Build Status](https://www.travis-ci.com/kenaniah/sidekiq-status.svg?branch=main)](https://www.travis-ci.com/github/kenaniah/sidekiq-status)
-[![Dependency Status](https://gemnasium.com/kenaniah/sidekiq-status.svg)](https://gemnasium.com/kenaniah/sidekiq-status)
 [![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
 An extension to [Sidekiq](https://github.com/mperham/sidekiq) message processing to track your jobs. Inspired
@@ -10,7 +8,7 @@ by [resque-status](https://github.com/quirkey/resque-status) and mostly copying 
 
 Fully compatible with ActiveJob.
 
-Supports the latest versions of Sidekiq and all the way back to 3.x.
+Supports the latest versions of Sidekiq and all the way back to 5.x.
 
 ## Installation
 
