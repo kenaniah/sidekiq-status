@@ -105,7 +105,7 @@ describe Sidekiq::Status do
         second_job = LongJob.perform_in(3600)
         expect(second_job).to eq(job_id_1)
 
-        initial_schedule = redis.zrange "schedule", 0, -1, {withscores: true}
+        initial_schedule = redis.zrange "schedule", 0, -1, withscores: true
         expect(initial_schedule.size).to  be(2)
         expect(initial_schedule.select {|scheduled_job| JSON.parse(scheduled_job[0])["jid"] == job_id }.size).to be(1)
 
@@ -113,7 +113,7 @@ describe Sidekiq::Status do
         # Unused, therefore unfound => false
         expect(Sidekiq::Status.cancel(unused_id)).to be_falsey
 
-        remaining_schedule = redis.zrange "schedule", 0, -1, {withscores: true}
+        remaining_schedule = redis.zrange "schedule", 0, -1, withscores: true
         expect(remaining_schedule.size).to be(initial_schedule.size - 1)
         expect(remaining_schedule.select {|scheduled_job| JSON.parse(scheduled_job[0])["jid"] == job_id }.size).to be(0)
       end
@@ -126,14 +126,14 @@ describe Sidekiq::Status do
         returned_job_id = LongJob.perform_at(scheduled_time)
         expect(returned_job_id).to eq(job_id)
 
-        initial_schedule = redis.zrange "schedule", 0, -1, {withscores: true}
+        initial_schedule = redis.zrange "schedule", 0, -1, withscores: true
         expect(initial_schedule.size).to be(1)
         # wrong time, therefore unfound => false
         expect(Sidekiq::Status.cancel(returned_job_id, (scheduled_time + 1))).to be_falsey
-        expect((redis.zrange "schedule", 0, -1, {withscores: true}).size).to be(1)
+        expect((redis.zrange "schedule", 0, -1, withscores: true).size).to be(1)
         # same id, same time, deletes
         expect(Sidekiq::Status.cancel(returned_job_id, (scheduled_time))).to be_truthy
-        expect(redis.zrange "schedule", 0, -1, {withscores: true}).to be_empty
+        expect(redis.zrange "schedule", 0, -1, withscores: true).to be_empty
       end
     end
   end

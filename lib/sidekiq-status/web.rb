@@ -136,7 +136,7 @@ module Sidekiq::Status
         job = Sidekiq::Status::get_all params['jid']
 
         if job.empty?
-          halt [404, {"Content-Type" => "text/html"}, [erb(sidekiq_status_template(:status_not_found))]]
+          throw :halt, [404, {"Content-Type" => "text/html"}, [erb(sidekiq_status_template(:status_not_found))]]
         else
           @status = add_details_to_status(job)
           erb(sidekiq_status_template(:status))
@@ -148,19 +148,23 @@ module Sidekiq::Status
         job = Sidekiq::RetrySet.new.find_job(params[:jid])
         job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
         job.retry if job
-        halt [302, { "Location" => request.referer }, []]
+        throw :halt, [302, { "Location" => request.referer }, []]
       end
 
       # Removes a completed job from the status list
       app.delete '/statuses' do
         Sidekiq::Status.delete(params[:jid])
-        halt [302, { "Location" => request.referer }, []]
+        throw :halt, [302, { "Location" => request.referer }, []]
       end
     end
   end
 end
 
-require 'sidekiq/web' unless defined?(Sidekiq::Web)
+unless defined?(Sidekiq::Web)
+  require 'delegate' # Needed for sidekiq 5.x
+  require 'sidekiq/web'
+end
+
 Sidekiq::Web.register(Sidekiq::Status::Web)
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
   Sidekiq::WebHelpers::SAFE_QPARAMS.push(key)

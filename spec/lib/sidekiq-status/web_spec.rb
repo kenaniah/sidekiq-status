@@ -13,6 +13,7 @@ describe 'sidekiq status web' do
   end
 
   before do
+    env 'rack.session', csrf: Base64.urlsafe_encode64('token')
     client_middleware
     allow(SecureRandom).to receive(:hex).and_return(job_id)
   end
