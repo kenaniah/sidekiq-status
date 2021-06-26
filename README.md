@@ -1,12 +1,12 @@
 # Sidekiq::Status
-[![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](http://badge.fury.io/rb/sidekiq-status)
-[![Code Climate](https://codeclimate.com/github/utgarda/sidekiq-status.svg)](https://codeclimate.com/github/utgarda/sidekiq-status)
-[![Build Status](https://secure.travis-ci.org/utgarda/sidekiq-status.svg)](http://travis-ci.org/utgarda/sidekiq-status)
-[![Dependency Status](https://gemnasium.com/utgarda/sidekiq-status.svg)](https://gemnasium.com/utgarda/sidekiq-status)
-[![Inline docs](http://inch-ci.org/github/utgarda/sidekiq-status.svg?branch=master)](http://inch-ci.org/github/utgarda/sidekiq-status)
+[![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](https://badge.fury.io/rb/sidekiq-status)
+[![Code Climate](https://codeclimate.com/github/kenaniah/sidekiq-status.svg)](https://codeclimate.com/github/kenaniah/sidekiq-status)
+[![Build Status](https://api.travis-ci.org/kenaniah/sidekiq-status.svg?branch=main)](https://travis-ci.org/github/kenaniah/sidekiq-status)
+[![Dependency Status](https://gemnasium.com/kenaniah/sidekiq-status.svg)](https://gemnasium.com/kenaniah/sidekiq-status)
+[![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
-An extension to [Sidekiq](http://github.com/mperham/sidekiq) message processing to track your jobs. Inspired
-by [resque-status](http://github.com/quirkey/resque-status) and mostly copying its features, using Sidekiq's middleware.
+An extension to [Sidekiq](https://github.com/mperham/sidekiq) message processing to track your jobs. Inspired
+by [resque-status](https://github.com/quirkey/resque-status) and mostly copying its features, using Sidekiq's middleware.
 
 Fully compatible with ActiveJob.
 
@@ -105,7 +105,7 @@ As sidekiq-status stores information about jobs in Redis, it is necessary to set
 
 As explained above, the default expiration may also be overridden on a per-job basis by defining it within the job itself via a method called `#expiration`.
 
-The expiration time set will be used as the [Redis expire time](http://redis.io/commands/expire), which is also known as the TTL (time to live). Once the expiration time has passed, all information about the job's status and any custom data stored via sidekiq-status will disappear.
+The expiration time set will be used as the [Redis expire time](https://redis.io/commands/expire), which is also known as the TTL (time to live). Once the expiration time has passed, all information about the job's status and any custom data stored via sidekiq-status will disappear.
 
 It is advised that you set the expiration time greater than the amount of time required to complete the job.
 
