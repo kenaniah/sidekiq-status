@@ -90,7 +90,7 @@ module Sidekiq::Status::Storage
   #  -  end: end score (i.e. +inf or a unix timestamp)
   #  -  offset: current progress through (all) jobs (e.g.: 100 if you want jobs from 100 to BATCH_LIMIT)
   def schedule_batch(options)
-    options[:conn].zrangebyscore "schedule", options[:start], options[:end], {limit: [options[:offset], BATCH_LIMIT]}
+    options[:conn].zrangebyscore "schedule", options[:start], options[:end], limit: [options[:offset], BATCH_LIMIT]
   end
 
   # Searches the jobs Array for the job_id
