@@ -1,7 +1,7 @@
 # Sidekiq::Status
 [![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](https://badge.fury.io/rb/sidekiq-status)
 [![Code Climate](https://codeclimate.com/github/kenaniah/sidekiq-status.svg)](https://codeclimate.com/github/kenaniah/sidekiq-status)
-[![Build Status](https://api.travis-ci.org/kenaniah/sidekiq-status.svg?branch=main)](https://travis-ci.org/github/kenaniah/sidekiq-status)
+[![Build Status](https://www.travis-ci.com/kenaniah/sidekiq-status.svg?branch=main)](https://www.travis-ci.com/github/kenaniah/sidekiq-status)
 [![Dependency Status](https://gemnasium.com/kenaniah/sidekiq-status.svg)](https://gemnasium.com/kenaniah/sidekiq-status)
 [![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
