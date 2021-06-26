@@ -5,7 +5,7 @@ Gem::Specification.new do |gem|
   gem.authors       = ['Evgeniy Tsvigun', 'Kenaniah Cerny']
   gem.email         = ['utgarda@gmail.com', 'kenaniah@gmail.com']
   gem.summary       = 'An extension to the sidekiq message processing to track your jobs'
-  gem.homepage      = 'http://github.com/kenaniah/sidekiq-status'
+  gem.homepage      = 'https://github.com/kenaniah/sidekiq-status'
   gem.license       = 'MIT'
 
   gem.files         = `git ls-files`.split($\)
