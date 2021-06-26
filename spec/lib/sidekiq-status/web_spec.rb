@@ -1,9 +1,6 @@
 require 'spec_helper'
 require 'sidekiq-status/web'
-require 'delegate'
-require 'rack/session/cookie'
 require 'rack/test'
-require 'base64'
 
 describe 'sidekiq status web' do
   include Rack::Test::Methods

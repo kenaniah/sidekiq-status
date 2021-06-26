@@ -160,7 +160,11 @@ module Sidekiq::Status
   end
 end
 
-require 'sidekiq/web' unless defined?(Sidekiq::Web)
+unless defined?(Sidekiq::Web)
+  require 'delegate' # Needed for sidekiq 5.x
+  require 'sidekiq/web'
+end
+
 Sidekiq::Web.register(Sidekiq::Status::Web)
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
   Sidekiq::WebHelpers::SAFE_QPARAMS.push(key)
