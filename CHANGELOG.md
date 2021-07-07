@@ -1,3 +1,6 @@
+**Version 2.0.2**
+ * Fixes for dark mode theme
+
 **Version 2.0.1**
  * Adds support for dark mode to the job status page
 
