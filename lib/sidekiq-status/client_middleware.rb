@@ -3,6 +3,7 @@ module Sidekiq::Status
 # Should be in the client middleware chain
   class ClientMiddleware
     include Storage
+    JOB_RECORD_CLASS = const_defined?("::Sidekiq::JobRecord") ? ::Sidekiq::JobRecord : ::Sidekiq::Job
 
     # Parameterized initialization, use it when adding middleware to client chain
     # chain.add Sidekiq::Status::ClientMiddleware, :expiration => 60 * 5
@@ -34,7 +35,7 @@ module Sidekiq::Status
         initial_metadata = {
           jid: msg['jid'],
           status: :queued,
-          worker: Sidekiq::Job.new(msg, queue).display_class,
+          worker: JOB_RECORD_CLASS.new(msg, queue).display_class,
           args: display_args(msg, queue)
         }
         store_for_id msg['jid'], initial_metadata, job_class.new.expiration || @expiration, redis_pool
@@ -45,7 +46,7 @@ module Sidekiq::Status
     end
 
     def display_args(msg, queue)
-      job = Sidekiq::Job.new(msg, queue)
+      job = JOB_RECORD_CLASS.new(msg, queue)
       return job.display_args.to_a.empty? ? nil : job.display_args.to_json
     rescue Exception => e
       # For Sidekiq ~> 2.7
