@@ -34,7 +34,7 @@ module Sidekiq::Status
         initial_metadata = {
           jid: msg['jid'],
           status: :queued,
-          worker: Sidekiq::Job.new(msg, queue).display_class,
+          worker: Sidekiq::Job.new,
           args: display_args(msg, queue)
         }
         store_for_id msg['jid'], initial_metadata, job_class.new.expiration || @expiration, redis_pool
