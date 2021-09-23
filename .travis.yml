@@ -6,6 +6,7 @@ rvm:
   - ruby-head
 gemfile:
   - gemfiles/sidekiq_5.x.gemfile
+  - gemfiles/sidekiq_6.1.gemfile
   - gemfiles/sidekiq_6.x.gemfile
 before_install:
   - gem update --system
