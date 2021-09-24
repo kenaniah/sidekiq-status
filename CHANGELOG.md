@@ -1,3 +1,6 @@
+**Version 2.1.0**
+ * Adds support for Sidekiq 6.2.2+ (https://github.com/mperham/sidekiq/issues/4955)
+
 **Version 2.0.2**
  * Fixes for dark mode theme
 
