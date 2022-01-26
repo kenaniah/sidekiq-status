@@ -61,7 +61,7 @@ describe 'sidekiq status web' do
     get "/statuses/#{job_id}"
     expect(last_response).to be_ok
     expect(last_response.body).to match(/#{job_id}/)
-    expect(last_response.body).to match(/1,"another argument"/)
+    expect(last_response.body).to match(/1,&quot;another argument&quot;/)
     expect(last_response.body).to match(/working/)
   end
 

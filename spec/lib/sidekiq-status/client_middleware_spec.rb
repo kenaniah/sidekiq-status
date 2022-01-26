@@ -12,13 +12,13 @@ describe Sidekiq::Status::ClientMiddleware do
   describe "without :expiration parameter" do
 
     it "sets queued status" do
-      expect(StubJob.perform_async arg1: 'val1').to eq(job_id)
+      expect(StubJob.perform_async 'arg1' => 'val1').to eq(job_id)
       expect(redis.hget("sidekiq:status:#{job_id}", :status)).to eq('queued')
       expect(Sidekiq::Status::queued?(job_id)).to be_truthy
     end
 
     it "sets status hash ttl" do
-      expect(StubJob.perform_async arg1: 'val1').to eq(job_id)
+      expect(StubJob.perform_async 'arg1' => 'val1').to eq(job_id)
       expect(1..Sidekiq::Status::DEFAULT_EXPIRY).to cover redis.ttl("sidekiq:status:#{job_id}")
     end
 
@@ -50,7 +50,7 @@ describe Sidekiq::Status::ClientMiddleware do
     end
 
     it "overwrites default expiry value" do
-      StubJob.perform_async arg1: 'val1'
+      StubJob.perform_async 'arg1' => 'val1'
       expect((Sidekiq::Status::DEFAULT_EXPIRY+1)..huge_expiration).to cover redis.ttl("sidekiq:status:#{job_id}")
     end
 
