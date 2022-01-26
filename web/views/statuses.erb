@@ -1,3 +1,4 @@
+<% require 'cgi'; def h(v); CGI.escape_html(v || ''); end %>
 <style>
 .progress {
   background-color: #C8E1ED;
@@ -78,9 +79,9 @@ function setPerPage(select){
 </div>
 <table class="table table-hover table-bordered table-striped">
   <tr>
-    <% @headers.each do |h| %>
-      <th class="header <%= h[:class] %> header_<%= h[:id] %>">
-        <a href="<%= h[:url] %>"><%= h[:name] %></a>
+    <% @headers.each do |hdr| %>
+      <th class="header <%= h hdr[:class] %> header_<%= h hdr[:id] %>">
+        <a href="<%= h hdr[:url] %>"><%= h hdr[:name] %></a>
       </th>
     <% end %>
     <th class="header">
@@ -90,13 +91,13 @@ function setPerPage(select){
   <% @statuses.each do |container| %>
     <tr>
       <td>
-        <div title='<%= container["jid"] %>'><a href="<%= root_path %>statuses/<%= container["jid"] %>"><%= container["worker"] %></a></div>
+        <div title='<%= h container["jid"] %>'><a href="<%= root_path %>statuses/<%= h container["jid"] %>"><%= h container["worker"] %></a></div>
       </td>
       <td>
-        <div class='args' title='<%= container["jid"] %>'><%= container["args"] %></div>
+        <div class='args' title='<%= h container["jid"] %>'><%= h container["args"] %></div>
       </td>
       <td style='text-align: center;'>
-        <div class='label label-<%= container["label"] %>'><%= container["status"] %></div>
+        <div class='label label-<%= h container["label"] %>'><%= h container["status"] %></div>
       </td>
       <% secs = Time.now.to_i - container["update_time"].to_i %>
       <td style='text-align: center; white-space: nowrap;' title="<%= Time.at(container["update_time"].to_i) %>">
@@ -109,11 +110,11 @@ function setPerPage(select){
       <td>
         <div class="progress progress-striped" style="margin-bottom: 0">
           <div class='message' style='text-align:right; padding-right:0.5em; background-color: transparent; float:right;'>
-            <%= container["message"] %>
+            <%= h container["message"] %>
           </div>
           <% if container["pct_complete"].to_i > 0 %>
-            <div class="bar message" style="width: <%= container["pct_complete"] %>%;">
-              <%= container["pct_complete"] %>%
+            <div class="bar message" style="width: <%= h container["pct_complete"] %>%;">
+              <%= h container["pct_complete"] %>%
             </div>
           <% end %>
         </div>
@@ -121,7 +122,7 @@ function setPerPage(select){
       <td>
         <div class="actions">
           <form action="statuses" method="post">
-            <input type="hidden" name="jid" value="<%= container["jid"] %>" />
+            <input type="hidden" name="jid" value="<%= h container["jid"] %>" />
             <%= csrf_tag %>
             <% if container["status"] == "complete" %>
               <input type="hidden" name="_method" value="delete" />
