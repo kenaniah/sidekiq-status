@@ -1,3 +1,6 @@
+**Version 2.1.1**
+ * Ensures parameter outputs are properly HTML-encoded
+
 **Version 2.1.0**
  * Adds support for Sidekiq 6.2.2+ (https://github.com/mperham/sidekiq/issues/4955)
 
