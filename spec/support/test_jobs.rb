@@ -119,13 +119,13 @@ end
 
 class RetriedJob < StubJob
 
-  sidekiq_options 'retry' => true
+  sidekiq_options retry: true
   sidekiq_retry_in do |count| 3 end # 3 second delay > job timeout in test suite
 
-  def perform()
+  def perform
     Sidekiq.redis do |conn|
       key = "RetriedJob_#{jid}"
-      unless conn.exists key
+      if [0, false].include? conn.exists(key)
         conn.set key, 'tried'
         raise StandardError
       end

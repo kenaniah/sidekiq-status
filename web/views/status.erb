@@ -1,3 +1,4 @@
+<% require 'cgi'; def h(v); CGI.escape_html(v || ''); end %>
 <style>
   .progress {
     background-color: #C8E1ED;
@@ -14,9 +15,9 @@
 </style>
 
 <h3>
-  Job Status: <%= @status["jid"] %>
-  <span class='label label-<%= @status["label"] %>'>
-    <%= @status["status"] %>
+  Job Status: <%= h @status["jid"] %>
+  <span class='label label-<%= h @status["label"] %>'>
+    <%= h @status["status"] %>
   </span>
 </h3>
 
@@ -30,14 +31,14 @@
 
 <div class="panel panel-default" style="background-color: inherit">
   <div class="panel-body">
-    <h4><%= @status["worker"] %></h4>
+    <h4><%= h @status["worker"] %></h4>
 
     <div class="row">
       <div class="col-sm-2">
         <strong>Arguments</strong>
       </div>
       <div class="col-sm-10">
-        <p><%= @status["args"].empty? ? "<i>none</i>" : @status["args"] %></p>
+        <p><%= @status["args"].empty? ? "<i>none</i>" : h(@status["args"]) %></p>
       </div>
     </div>
 
@@ -46,7 +47,7 @@
         <strong>Message</strong>
       </div>
       <div class="col-sm-10">
-        <p><%= @status["message"] || "<i>none</i>" %></p>
+        <p><%= h(@status["message"]) || "<i>none</i>" %></p>
       </div>
     </div>
 
@@ -75,9 +76,9 @@
           </div>
           <div class="col-sm-10">
             <% if val && val.include?("\n") %>
-              <pre><%= val %></pre>
+              <pre><%= h val %></pre>
             <% else  %>
-              <p><%= val || "<i>none</i>" %></p>
+              <p><%= h(val) || "<i>none</i>" %></p>
             <% end %>
           </div>
         </div>

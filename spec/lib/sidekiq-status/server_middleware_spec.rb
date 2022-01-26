@@ -10,7 +10,7 @@ describe Sidekiq::Status::ServerMiddleware do
       allow(SecureRandom).to receive(:hex).once.and_return(job_id)
       start_server do
         thread = redis_thread 4, "status_updates", "job_messages_#{job_id}"
-        expect(ConfirmationJob.perform_async arg1: 'val1').to eq(job_id)
+        expect(ConfirmationJob.perform_async 'arg1' => 'val1').to eq(job_id)
         expect(thread.value).to eq([
           job_id,
           job_id,
@@ -90,7 +90,7 @@ describe Sidekiq::Status::ServerMiddleware do
     it "sets status hash ttl" do
       allow(SecureRandom).to receive(:hex).once.and_return(job_id)
       start_server do
-        expect(StubJob.perform_async arg1: 'val1').to eq(job_id)
+        expect(StubJob.perform_async 'arg1' => 'val1').to eq(job_id)
       end
       expect(1..Sidekiq::Status::DEFAULT_EXPIRY).to cover redis.ttl("sidekiq:status:#{job_id}")
     end
@@ -104,7 +104,7 @@ describe Sidekiq::Status::ServerMiddleware do
 
     it "overwrites default expiry value" do
       start_server(:expiration => huge_expiration) do
-        StubJob.perform_async arg1: 'val1'
+        StubJob.perform_async 'arg1' => 'val1'
       end
       expect((Sidekiq::Status::DEFAULT_EXPIRY-1)..huge_expiration).to cover redis.ttl("sidekiq:status:#{job_id}")
     end
@@ -113,7 +113,7 @@ describe Sidekiq::Status::ServerMiddleware do
       overwritten_expiration = huge_expiration * 100
       allow_any_instance_of(StubJob).to receive(:expiration).and_return(overwritten_expiration)
       start_server(:expiration => huge_expiration) do
-        StubJob.perform_async arg1: 'val1'
+        StubJob.perform_async 'arg1' => 'val1'
       end
       expect((huge_expiration+1)..overwritten_expiration).to cover redis.ttl("sidekiq:status:#{job_id}")
     end
