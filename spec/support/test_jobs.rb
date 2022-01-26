@@ -125,7 +125,7 @@ class RetriedJob < StubJob
   def perform
     Sidekiq.redis do |conn|
       key = "RetriedJob_#{jid}"
-      unless conn.exists(key) > 0
+      if [0, false].include? conn.exists(key)
         conn.set key, 'tried'
         raise StandardError
       end
