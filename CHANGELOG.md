@@ -1,3 +1,6 @@
+**Version 2.1.2**
+ * Casts values to strings when HTML-encoding
+
 **Version 2.1.1**
  * Ensures parameter outputs are properly HTML-encoded
 

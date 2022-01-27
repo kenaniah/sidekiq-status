@@ -1,4 +1,4 @@
-<% require 'cgi'; def h(v); CGI.escape_html(v || ''); end %>
+<% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
 <style>
   .progress {
     background-color: #C8E1ED;
