@@ -1,3 +1,6 @@
+**Version 2.1.3**
+* Fixes redis deprecation warnings (https://github.com/kenaniah/sidekiq-status/issues/11)
+
 **Version 2.1.2**
  * Casts values to strings when HTML-encoding
 
