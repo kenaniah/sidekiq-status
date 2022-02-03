@@ -13,10 +13,10 @@ module Sidekiq::Status::Storage
   # @return [String] Redis operation status code
   def store_for_id(id, status_updates, expiration = nil, redis_pool=nil)
     redis_connection(redis_pool) do |conn|
-      conn.multi do
-        conn.hmset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
-        conn.expire key(id), (expiration || Sidekiq::Status::DEFAULT_EXPIRY)
-        conn.publish "status_updates", id
+      conn.multi do |pipeline|
+        pipeline.hmset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
+        pipeline.expire key(id), (expiration || Sidekiq::Status::DEFAULT_EXPIRY)
+        pipeline.publish "status_updates", id
       end[0]
     end
   end
