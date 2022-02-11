@@ -175,6 +175,8 @@ Sidekiq::Status::at      job_id #=> 5
 Sidekiq::Status::total   job_id #=> 100
 Sidekiq::Status::message job_id #=> "Almost done"
 Sidekiq::Status::pct_complete job_id #=> 5
+Sidekiq::Status::working_at job_id #=> 2718
+Sidekiq::Status::update_time job_id #=> 2819
 ```
 
 ### Unscheduling
