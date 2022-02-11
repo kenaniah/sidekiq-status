@@ -119,6 +119,16 @@ function setPerPage(select){
           <% end %>
         </div>
       </td>
+      <td style='text-align: center; white-space: nowrap;'>
+        <% if container["elapsed"] %>
+          <%= ChronicDuration.output(container["elapsed"].to_i, :weeks => true, :units => 2) %>
+        <% end %>
+      </td>
+      <td style='text-align: center; white-space: nowrap;'>
+        <% if container["eta"] %>
+          <%= ChronicDuration.output(container["eta"].to_i, :weeks => true, :units => 2) %>
+        <% end %>
+      </td>
       <td>
         <div class="actions">
           <form action="statuses" method="post">
