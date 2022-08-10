@@ -1,4 +1,5 @@
 if Sidekiq.major_version >= 5
+  require 'sidekiq/component'
   require 'sidekiq/job_retry'
 end
 
