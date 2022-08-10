@@ -1,5 +1,5 @@
 if Sidekiq.major_version >= 5
-  require 'sidekiq/component'
+  require 'sidekiq/component' rescue nil
   require 'sidekiq/job_retry'
 end
 
