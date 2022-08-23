@@ -66,7 +66,7 @@ module Sidekiq::Status
         def elapsed(status)
           case status['status']
           when 'complete'
-            Sidekiq::Status::update_time(status['jid']) - Sidekiq::Status.working_at(status['jid'])
+            Sidekiq::Status.update_time(status['jid']) - Sidekiq::Status.working_at(status['jid'])
           when 'working', 'retrying'
             Time.now.to_i - Sidekiq::Status.working_at(status['jid'])
           end
