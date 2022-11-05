@@ -5,6 +5,7 @@ require 'sidekiq'
 # Celluloid should only be manually required before Sidekiq versions 4.+
 require 'sidekiq/version'
 require 'celluloid' if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new('4.0')
+require 'redis'
 
 require 'sidekiq/processor'
 require 'sidekiq/manager'
@@ -33,21 +34,20 @@ def redis_thread messages_limit, *channels
   parent = Thread.current
   thread = Thread.new {
     messages = []
-    Sidekiq.redis do |conn|
-      puts "Subscribing to #{channels} for #{messages_limit.to_s.bold} messages".cyan if ENV['DEBUG']
-      conn.subscribe_with_timeout 60, *channels do |on|
-        on.subscribe do |ch, subscriptions|
-          puts "Subscribed to #{ch}".cyan if ENV['DEBUG']
-          if subscriptions == channels.size
-            sleep 0.1 while parent.status != "sleep"
-            parent.run
-          end
+    conn = Redis.new
+    puts "Subscribing to #{channels} for #{messages_limit.to_s.bold} messages".cyan if ENV['DEBUG']
+    conn.subscribe_with_timeout 60, *channels do |on|
+      on.subscribe do |ch, subscriptions|
+        puts "Subscribed to #{ch}".cyan if ENV['DEBUG']
+        if subscriptions == channels.size
+          sleep 0.1 while parent.status != "sleep"
+          parent.run
         end
-        on.message do |ch, msg|
-          puts "Message received: #{ch} -> #{msg}".white if ENV['DEBUG']
-          messages << msg
-          conn.unsubscribe if messages.length >= messages_limit
-        end
+      end
+      on.message do |ch, msg|
+        puts "Message received: #{ch} -> #{msg}".white if ENV['DEBUG']
+        messages << msg
+        conn.unsubscribe if messages.length >= messages_limit
       end
     end
     puts "Returing from thread".cyan if ENV['DEBUG']

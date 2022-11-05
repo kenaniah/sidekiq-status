@@ -29,7 +29,7 @@ module Sidekiq::Status::Storage
   # @param [ConnectionPool] redis_pool optional redis connection pool
   # @return [String] Redis operation status code
   def store_status(id, status, expiration = nil, redis_pool=nil)
-    store_for_id id, {status: status}, expiration, redis_pool
+    store_for_id id, {status: status}, expiration.to_s, redis_pool
   end
 
   # Unschedules the job and deletes the Status

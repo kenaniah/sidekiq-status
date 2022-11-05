@@ -39,7 +39,7 @@ module Sidekiq::Status
           worker: JOB_CLASS.new(msg, queue).display_class,
           args: display_args(msg, queue)
         }
-        store_for_id msg['jid'], initial_metadata, job_class.new.expiration || @expiration, redis_pool
+        store_for_id msg['jid'], initial_metadata, (job_class.new.expiration || @expiration).to_s, redis_pool
       end
 
       yield
