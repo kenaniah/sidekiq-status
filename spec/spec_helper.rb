@@ -89,7 +89,9 @@ def start_server server_middleware_options = {}
 
     # Launch
     puts "Server starting".yellow if ENV['DEBUG']
-    Sidekiq::CLI.instance.run
+    instance = Sidekiq::CLI.instance
+    instance.parse(['-r', File.expand_path('environment.rb', File.dirname(__FILE__))])
+    instance.run
 
   end
 
