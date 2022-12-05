@@ -60,8 +60,47 @@ def redis_thread messages_limit, *channels
 
 end
 
+def redis_client_thread message_limit, *channels
+  thread = Thread.new {
+    messages = []
+    Sidekiq.redis do |conn|
+      puts "Subscribing to #{channels} for #{message_limit.to_s.bold} messages".cyan if ENV['DEBUG']
+      pubsub = conn.pubsub
+      pubsub.call("SUBSCRIBE", *channels)
+
+      timeouts = 0
+      loop do
+        type, ch, msg = pubsub.next_event(2)
+        next if type == "subscribe"
+        if msg
+          puts "Message received: #{ch} -> #{msg}".white if ENV['DEBUG']
+          messages << msg
+          break if messages.length >= message_limit
+        else
+          # no new message was received in the allocated timeout
+          timeouts += 1
+          break if timeouts >= 30
+        end
+      end
+    end
+    puts "Returing from thread".cyan if ENV['DEBUG']
+    messages
+  }
+  sleep 0.1
+  yield if block_given?
+  thread.join
+end
+
+def branched_redis_thread n, *channels, &block
+  if Sidekiq.major_version < 7
+    redis_thread(n, *channels, &block)
+  else
+    redis_client_thread(n, *channels, &block)
+  end
+end
+
 def capture_status_updates n, &block
-  redis_thread(n, "status_updates", &block).value
+  branched_redis_thread(n, "status_updates", &block).value
 end
 
 # Configures server middleware and launches a sidekiq server
@@ -76,14 +115,11 @@ def start_server server_middleware_options = {}
 
     # Load and configure server options
     require 'sidekiq/cli'
-    Sidekiq.options[:queues] << 'default'
-    Sidekiq.options[:require] = File.expand_path 'environment.rb', File.dirname(__FILE__)
-    Sidekiq.options[:timeout] = 1
-    Sidekiq.options[:concurrency] = 5
 
     # Add the server middleware
     Sidekiq.configure_server do |config|
-      config.redis = Sidekiq::RedisConnection.create
+      config.concurrency = 5
+      config.redis = Sidekiq::RedisConnection.create if Sidekiq.major_version < 7
       Sidekiq::Status.configure_server_middleware config, server_middleware_options
     end
 
