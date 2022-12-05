@@ -82,9 +82,12 @@ module Sidekiq::Status
       app.get '/statuses' do
 
         jids = Sidekiq.redis do |conn|
-          conn.scan_each(match: 'sidekiq:status:*', count: 100).map do |key|
-            key.split(':').last
-          end.uniq
+          keys = if conn.respond_to?(:scan_each)
+            conn.scan_each(match: 'sidekiq:status:*', count: 100)
+          else
+            conn.scan(match: 'sidekiq:status:*', count: 100)
+          end
+          keys.map { |key| key.split(':').last }.uniq
         end
         @statuses = []
 

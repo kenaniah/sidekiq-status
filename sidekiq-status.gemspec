@@ -14,7 +14,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ['lib']
   gem.version       = Sidekiq::Status::VERSION
 
-  gem.add_dependency                  'sidekiq', '>= 5.0'
+  gem.add_dependency                  'sidekiq', '>= 5.0', '< 8.0'
   gem.add_dependency                  'chronic_duration'
   gem.add_development_dependency      'appraisal'
   gem.add_development_dependency      'colorize'

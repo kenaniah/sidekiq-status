@@ -12,6 +12,7 @@ module Sidekiq::Status::Storage
   # @param [ConnectionPool] redis_pool optional redis connection pool
   # @return [String] Redis operation status code
   def store_for_id(id, status_updates, expiration = nil, redis_pool=nil)
+    status_updates.transform_values!(&:to_s)
     redis_connection(redis_pool) do |conn|
       conn.multi do |pipeline|
         pipeline.hmset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
@@ -90,7 +91,11 @@ module Sidekiq::Status::Storage
   #  -  end: end score (i.e. +inf or a unix timestamp)
   #  -  offset: current progress through (all) jobs (e.g.: 100 if you want jobs from 100 to BATCH_LIMIT)
   def schedule_batch(options)
-    options[:conn].zrangebyscore "schedule", options[:start], options[:end], limit: [options[:offset], BATCH_LIMIT]
+    if options[:conn].class.name == "Sidekiq::RedisClientAdapter::CompatClient"
+      options[:conn].zrange("schedule", options[:start], options[:end], :byscore, :limit, options[:offset], BATCH_LIMIT)
+    else
+      options[:conn].zrangebyscore "schedule", options[:start], options[:end], limit: [options[:offset], BATCH_LIMIT]
+    end
   end
 
   # Searches the jobs Array for the job_id
