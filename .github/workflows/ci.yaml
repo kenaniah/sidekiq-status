@@ -10,17 +10,20 @@ on:
 
 jobs:
   test:
+
     runs-on: ubuntu-latest
+
     services:
       redis:
         image: redis
-        ports:
-          - 6379:6379
         options: >-
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 6379:6379
+
     strategy:
       fail-fast: false
       matrix:
@@ -34,9 +37,10 @@ jobs:
           - 'gemfiles/sidekiq_5.x.gemfile'
           - 'gemfiles/sidekiq_6.1.gemfile'
           - 'gemfiles/sidekiq_6.x.gemfile'
+
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
-      REDIS_URL: redis://localhost:6379
+
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby ${{ matrix.ruby-version }}
