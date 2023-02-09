@@ -36,6 +36,7 @@ jobs:
           - 'gemfiles/sidekiq_6.x.gemfile'
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
+      REDIS_URL: redis://redis:6379
     steps:
       - uses: actions/checkout@v3
       - name: Set up Ruby ${{ matrix.ruby-version }}
