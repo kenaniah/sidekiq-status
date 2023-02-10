@@ -33,9 +33,9 @@ jobs:
           - '3.1'
           - '3.2'
         gemfile:
-          - 'gemfiles/sidekiq_5.x.gemfile'
           - 'gemfiles/sidekiq_6.1.gemfile'
           - 'gemfiles/sidekiq_6.x.gemfile'
+          - 'gemfiles/sidekiq_7.x.gemfile'
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}

@@ -152,7 +152,7 @@ describe Sidekiq::Status do
       seed_secure_random_with_job_ids
       start_server(:expiration => expiration_param) do
         expect {
-          Sidekiq::Client.new(pool: Sidekiq.redis_pool).
+          Sidekiq::Client.new(Sidekiq.redis_pool).
             push("class" => "NotAKnownClass", "args" => [])
         }.to_not raise_error
       end
