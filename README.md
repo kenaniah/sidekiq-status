@@ -5,7 +5,7 @@
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
-Requires Ruby 2.6+ and Sidekiq 5.0+ or newer.
+Requires Ruby 2.6+ and Sidekiq 6.0+ or newer.
 
 ## Installation
 
