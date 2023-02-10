@@ -1,5 +1,10 @@
+**Version 3.0.0**
+ * Drops support for Sidekiq 5.x
+ * Adds support for Sidekiq 7.x
+ * Migrates from Travis CI to GitHub Actions
+
 **Version 2.1.3**
-* Fixes redis deprecation warnings (https://github.com/kenaniah/sidekiq-status/issues/11)
+ * Fixes redis deprecation warnings (https://github.com/kenaniah/sidekiq-status/issues/11)
 
 **Version 2.1.2**
  * Casts values to strings when HTML-encoding
