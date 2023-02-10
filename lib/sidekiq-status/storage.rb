@@ -12,6 +12,7 @@ module Sidekiq::Status::Storage
   # @param [ConnectionPool] redis_pool optional redis connection pool
   # @return [String] Redis operation status code
   def store_for_id(id, status_updates, expiration = nil, redis_pool=nil)
+    status_updates.transform_values!(&:to_s)
     redis_connection(redis_pool) do |conn|
       conn.multi do |pipeline|
         pipeline.hmset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
@@ -36,7 +37,7 @@ module Sidekiq::Status::Storage
   # @param [String] id job id
   # @param [Num] job_unix_time, unix timestamp for the scheduled job
   def delete_and_unschedule(job_id, job_unix_time = nil)
-    Sidekiq.redis do |conn|
+    Sidekiq::Status.redis_adapter do |conn|
       scan_options = {offset: 0, conn: conn, start: (job_unix_time || '-inf'), end: (job_unix_time || '+inf')}
 
       while not (jobs = schedule_batch(scan_options)).empty?
@@ -66,7 +67,7 @@ module Sidekiq::Status::Storage
   # @param [String] Symbol field fetched field name
   # @return [String] Redis operation status code
   def read_field_for_id(id, field)
-    Sidekiq.redis do |conn|
+    Sidekiq::Status.redis_adapter do |conn|
       conn.hget(key(id), field)
     end
   end
@@ -75,8 +76,8 @@ module Sidekiq::Status::Storage
   # @param [String] id job id
   # @return [Hash] Hash stored in redis
   def read_hash_for_id(id)
-    Sidekiq.redis do |conn|
-      conn.hgetall key(id)
+    Sidekiq::Status.redis_adapter do |conn|
+      conn.hgetall(key(id))
     end
   end
 
@@ -90,7 +91,7 @@ module Sidekiq::Status::Storage
   #  -  end: end score (i.e. +inf or a unix timestamp)
   #  -  offset: current progress through (all) jobs (e.g.: 100 if you want jobs from 100 to BATCH_LIMIT)
   def schedule_batch(options)
-    options[:conn].zrangebyscore "schedule", options[:start], options[:end], limit: [options[:offset], BATCH_LIMIT]
+    Sidekiq::Status.wrap_redis_connection(options[:conn]).schedule_batch("schedule", options.merge(limit: BATCH_LIMIT))
   end
 
   # Searches the jobs Array for the job_id

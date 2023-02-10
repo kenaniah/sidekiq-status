@@ -1,6 +1,6 @@
 # Sidekiq::Status
 [![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](https://badge.fury.io/rb/sidekiq-status)
-[![Build Status](https://www.travis-ci.com/kenaniah/sidekiq-status.svg?branch=main)](https://www.travis-ci.com/github/kenaniah/sidekiq-status)
+[![Build Status](https://github.com/kenaniah/sidekiq-status/actions/workflows/ci.yaml/badge.svg)](https://github.com/kenaniah/sidekiq-status/actions/)
 [![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).

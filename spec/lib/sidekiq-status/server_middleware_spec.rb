@@ -9,8 +9,9 @@ describe Sidekiq::Status::ServerMiddleware do
     it "sets working/complete status" do
       allow(SecureRandom).to receive(:hex).once.and_return(job_id)
       start_server do
-        thread = redis_thread 4, "status_updates", "job_messages_#{job_id}"
-        expect(ConfirmationJob.perform_async 'arg1' => 'val1').to eq(job_id)
+        thread = branched_redis_thread 4, "status_updates", "job_messages_#{job_id}" do
+          expect(ConfirmationJob.perform_async 'arg1' => 'val1').to eq(job_id)
+        end
         expect(thread.value).to eq([
           job_id,
           job_id,
