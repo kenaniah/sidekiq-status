@@ -48,7 +48,7 @@ module Sidekiq::Status
 
     def display_args(msg, queue)
       job = JOB_CLASS.new(msg, queue)
-      return job.display_args.to_a.empty? ? nil : job.display_args.to_json
+      return job.display_args.to_a.empty? ? "{}" : job.display_args.to_json
     rescue Exception => e
       # For Sidekiq ~> 2.7
       return msg['args'].to_a.empty? ? nil : msg['args'].to_json

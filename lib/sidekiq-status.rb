@@ -2,6 +2,8 @@ require 'sidekiq-status/version'
 require 'sidekiq-status/sidekiq_extensions'
 require 'sidekiq-status/storage'
 require 'sidekiq-status/worker'
+require 'sidekiq-status/redis_client_adapter'
+require 'sidekiq-status/redis_adapter'
 require 'sidekiq-status/client_middleware'
 require 'sidekiq-status/server_middleware'
 require 'sidekiq-status/web' if defined?(Sidekiq::Web)
@@ -78,6 +80,18 @@ module Sidekiq::Status
 
     def message(job_id)
       get(job_id, :message)
+    end
+
+    def wrap_redis_connection(conn)
+      if Sidekiq.major_version >= 7
+        conn.is_a?(RedisClientAdapter) ? conn : RedisClientAdapter.new(conn)
+      else
+        conn.is_a?(RedisAdapter) ? conn : RedisAdapter.new(conn)
+      end
+    end
+
+    def redis_adapter
+      Sidekiq.redis { |conn| yield wrap_redis_connection(conn) }
     end
   end
 end
