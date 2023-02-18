@@ -1,7 +1,6 @@
 # Sidekiq::Status
 [![Gem Version](https://badge.fury.io/rb/sidekiq-status.svg)](https://badge.fury.io/rb/sidekiq-status)
 [![Build Status](https://github.com/kenaniah/sidekiq-status/actions/workflows/ci.yaml/badge.svg)](https://github.com/kenaniah/sidekiq-status/actions/)
-[![Inline docs](https://inch-ci.org/github/kenaniah/sidekiq-status.svg?branch=main)](https://inch-ci.org/github/kenaniah/sidekiq-status)
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
@@ -20,6 +19,10 @@ Or install it yourself as:
 ```bash
 gem install sidekiq-status
 ```
+
+### Migrating to Version 3.x from 2.x
+
+Version 3.0.0 adds support for Sidekiq 7.x, but drops support for Sidekiq 5.x. **You should be able to upgrade cleanly from version 2.x to 3.x provided you are running Sidekiq 6.x or newer.**
 
 #### Migrating to Version 2.x from 1.x
 

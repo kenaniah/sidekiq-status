@@ -1,3 +1,6 @@
+**Version 3.0.1**
+ - Adds elapsed time and ETA to the job status page (https://github.com/kenaniah/sidekiq-status/pull/13)
+
 **Version 3.0.0**
  - Drops support for Sidekiq 5.x
  - Adds support for Sidekiq 7.x
