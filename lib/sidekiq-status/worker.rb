@@ -29,7 +29,7 @@ module Sidekiq::Status::Worker
   def at(num, message = nil)
     @_status_total = 100 if @_status_total.nil?
     pct_complete = ((num / @_status_total.to_f) * 100).to_i rescue 0
-    store(at: num, total: @_status_total, pct_complete: pct_complete, message: message)
+    store(at: num, total: @_status_total, pct_complete: pct_complete, message: message, working_at: working_at)
   end
 
   # Sets total number of tasks
@@ -37,7 +37,12 @@ module Sidekiq::Status::Worker
   # @return [String]
   def total(num)
     @_status_total = num
-    store(total: num)
+    store(total: num, working_at: working_at)
   end
 
+  private
+
+  def working_at
+    @working_at ||= Time.now.to_i
+  end
 end

@@ -63,6 +63,21 @@ module Sidekiq::Status
       get(job_id, :pct_complete).to_i
     end
 
+    def working_at(job_id)
+      (get(job_id, :working_at) || Time.now).to_i
+    end
+
+    def update_time(job_id)
+      (get(job_id, :update_time) || Time.now).to_i
+    end
+
+    def eta(job_id)
+      at = at(job_id)
+      return nil if at.zero?
+
+      (Time.now.to_i - working_at(job_id)).to_f / at * (total(job_id) - at)
+    end
+
     def message(job_id)
       get(job_id, :message)
     end

@@ -20,4 +20,22 @@ describe Sidekiq::Status::Worker do
       expect(subject.expiration).to eq(:val)
     end
   end
+
+  describe ".at" do
+    subject { StubJob.new }
+
+    it "records when the worker has started" do
+      expect { subject.at(0) }.to(change { subject.retrieve('working_at') })
+    end
+
+    context "when setting the total for the worker" do
+      it "records when the worker has started" do
+        expect { subject.total(100) }.to(change { subject.retrieve('working_at') })
+      end
+    end
+
+    it "records when the worker last worked" do
+      expect { subject.at(0) }.to(change { subject.retrieve('update_time') })
+    end
+  end
 end

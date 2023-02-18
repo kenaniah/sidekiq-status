@@ -8,7 +8,7 @@ module Sidekiq::Status
 
     DEFAULT_PER_PAGE_OPTS = [25, 50, 100].freeze
     DEFAULT_PER_PAGE = 25
-    COMMON_STATUS_HASH_KEYS = %w(update_time jid status worker args label pct_complete total at message)
+    COMMON_STATUS_HASH_KEYS = %w(update_time jid status worker args label pct_complete total at message working_at elapsed eta)
 
     class << self
       def per_page_opts= arr
@@ -48,6 +48,8 @@ module Sidekiq::Status
         def add_details_to_status(status)
           status['label'] = status_label(status['status'])
           status["pct_complete"] ||= pct_complete(status)
+          status["elapsed"] ||= elapsed(status).to_s
+          status["eta"] ||= eta(status).to_s
           status["custom"] = process_custom_data(status)
           return status
         end
@@ -59,6 +61,19 @@ module Sidekiq::Status
         def pct_complete(status)
           return 100 if status['status'] == 'complete'
           Sidekiq::Status::pct_complete(status['jid']) || 0
+        end
+
+        def elapsed(status)
+          case status['status']
+          when 'complete'
+            Sidekiq::Status.update_time(status['jid']) - Sidekiq::Status.working_at(status['jid'])
+          when 'working', 'retrying'
+            Time.now.to_i - Sidekiq::Status.working_at(status['jid'])
+          end
+        end
+
+        def eta(status)
+          Sidekiq::Status.eta(status['jid']) if status['status'] == 'working'
         end
 
         def status_label(status)
@@ -122,6 +137,8 @@ module Sidekiq::Status
           {id: "status", name: "Status", class: nil, url: nil},
           {id: "update_time", name: "Last Updated", class: nil, url: nil},
           {id: "pct_complete", name: "Progress", class: nil, url: nil},
+          {id: "elapsed", name: "Time Elapsed", class: nil, url: nil},
+          {id: "eta", name: "ETA", class: nil, url: nil},
         ]
 
         @headers.each do |h|
