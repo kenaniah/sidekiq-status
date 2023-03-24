@@ -1,4 +1,4 @@
-module Sidekiq::Status::Worker
+module Sidekiq::Status::Job
   include Sidekiq::Status::Storage
 
   class Stopped < StandardError

@@ -25,6 +25,7 @@ module Sidekiq::Status
     # Exception handler sets :failed status, re-inserts worker and re-throws the exception
     # Worker::Stopped exception type are processed separately - :stopped status is set, no re-throwing
     #
+    # @param [Job] job job instance, processed here if its class includes Status::Job
     # @param [Worker] worker worker instance, processed here if its class includes Status::Worker
     # @param [Array] msg job args, should have jid format
     # @param [String] queue queue name
