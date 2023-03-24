@@ -1,8 +1,8 @@
 require 'sidekiq-status'
 
 class StubJob
-  include Sidekiq::Worker
-  include Sidekiq::Status::Worker
+  include Sidekiq::Job
+  include Sidekiq::Status::Job
 
   sidekiq_options 'retry' => false
 
@@ -11,7 +11,7 @@ class StubJob
 end
 
 class StubNoStatusJob
-  include Sidekiq::Worker
+  include Sidekiq::Job
 
   sidekiq_options 'retry' => false
 
@@ -65,7 +65,7 @@ class ConfirmationJob < StubJob
 end
 
 class NoStatusConfirmationJob
-  include Sidekiq::Worker
+  include Sidekiq::Job
   def perform(id)
     Sidekiq.redis do |conn|
       conn.set "NoStatusConfirmationJob_#{id}", "done"
