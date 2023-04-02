@@ -1,3 +1,6 @@
+**Version 3.0.2**
+ - Avoids setting statuses for non-status jobs when an exception is thrown (https://github.com/kenaniah/sidekiq-status/pull/32)
+
 **Version 3.0.1**
  - Adds elapsed time and ETA to the job status page (https://github.com/kenaniah/sidekiq-status/pull/13)
 
