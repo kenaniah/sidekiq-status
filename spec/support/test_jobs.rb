@@ -111,7 +111,19 @@ class ExitedJob < StubJob
   end
 end
 
+class ExitedNoStatusJob < StubNoStatusJob
+  def perform
+    raise SystemExit
+  end
+end
+
 class InterruptedJob < StubJob
+  def perform
+    raise Interrupt
+  end
+end
+
+class InterruptedNoStatusJob < StubNoStatusJob
   def perform
     raise Interrupt
   end

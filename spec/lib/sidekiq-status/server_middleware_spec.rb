@@ -61,6 +61,22 @@ describe Sidekiq::Status::ServerMiddleware do
         end
         expect(redis.hget("sidekiq:status:#{job_id}", :status)).to be_nil
       end
+
+      it "should not set any status on system exit signal" do
+        allow(SecureRandom).to receive(:hex).once.and_return(job_id)
+        start_server do
+          expect(ExitedNoStatusJob.perform_async).to eq(job_id)
+        end
+        expect(redis.hget("sidekiq:status:#{job_id}", :status)).to be_nil
+      end
+
+      it "should not set any status on interrupt signal" do
+        allow(SecureRandom).to receive(:hex).once.and_return(job_id)
+        start_server do
+          expect(InterruptedNoStatusJob.perform_async).to eq(job_id)
+        end
+        expect(redis.hget("sidekiq:status:#{job_id}", :status)).to be_nil
+      end
     end
 
     context "sets interrupted status" do

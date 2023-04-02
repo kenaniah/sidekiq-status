@@ -43,26 +43,28 @@ module Sidekiq::Status
         return
       end
 
-      # Determine job expiration
-      expiry = job_class.new.expiration || @expiration rescue @expiration
+      begin
+        # Determine job expiration
+        expiry = job_class.new.expiration || @expiration rescue @expiration
 
-      store_status worker.jid, :working,  expiry
-      yield
-      store_status worker.jid, :complete, expiry
-    rescue Worker::Stopped
-      store_status worker.jid, :stopped, expiry
-    rescue SystemExit, Interrupt
-      store_status worker.jid, :interrupted, expiry
-      raise
-    rescue Exception
-      status = :failed
-      if msg['retry']
-        if retry_attempt_number(msg) < retry_attempts_from(msg['retry'], DEFAULT_MAX_RETRY_ATTEMPTS)
-          status = :retrying
+        store_status worker.jid, :working,  expiry
+        yield
+        store_status worker.jid, :complete, expiry
+      rescue Worker::Stopped
+        store_status worker.jid, :stopped, expiry
+      rescue SystemExit, Interrupt
+        store_status worker.jid, :interrupted, expiry
+        raise
+      rescue Exception
+        status = :failed
+        if msg['retry']
+          if retry_attempt_number(msg) < retry_attempts_from(msg['retry'], DEFAULT_MAX_RETRY_ATTEMPTS)
+            status = :retrying
+          end
         end
+        store_status(worker.jid, status, expiry) if job_class && job_class.ancestors.include?(Sidekiq::Status::Worker)
+        raise
       end
-      store_status(worker.jid, status, expiry) if job_class && job_class.ancestors.include?(Sidekiq::Status::Worker)
-      raise
     end
 
     private
