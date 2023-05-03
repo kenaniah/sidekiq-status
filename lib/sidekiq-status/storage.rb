@@ -15,7 +15,7 @@ module Sidekiq::Status::Storage
     status_updates.transform_values!(&:to_s)
     redis_connection(redis_pool) do |conn|
       conn.multi do |pipeline|
-        pipeline.hmset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
+        pipeline.hset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
         pipeline.expire key(id), (expiration || Sidekiq::Status::DEFAULT_EXPIRY)
         pipeline.publish "status_updates", id
       end[0]
