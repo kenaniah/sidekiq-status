@@ -1,3 +1,6 @@
+**Version 3.0.3**
+ - Fixes a Sidekiq warning about the deprecated `hmset` redis command (https://github.com/kenaniah/sidekiq-status/pull/37)
+
 **Version 3.0.2**
  - Avoids setting statuses for non-status jobs when an exception is thrown (https://github.com/kenaniah/sidekiq-status/pull/32)
 
