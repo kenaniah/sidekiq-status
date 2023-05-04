@@ -242,11 +242,15 @@ Inlining example:
 
 You can run Sidekiq workers inline in your tests by requiring the `sidekiq/testing/inline` file in your `{test,spec}_helper.rb`:
 
-`require 'sidekiq/testing/inline'`
+```ruby
+require 'sidekiq/testing/inline'
+```
 
 To use `sidekiq-status` inlining, require it too in your `{test,spec}_helper.rb`:
 
-`require 'sidekiq-status/testing/inline'`
+```ruby
+require 'sidekiq-status/testing/inline'
+```
 
 ## Contributing
 
