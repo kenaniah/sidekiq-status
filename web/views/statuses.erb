@@ -49,18 +49,13 @@
   margin: 0 0 0 5px;
 }
 </style>
-<script>
-function setPerPage(select){
-  window.location = select.options[select.selectedIndex].getAttribute('data-url')
-}
-</script>
 <div style="display: flex; justify-content: space-between;">
   <h3 class="wi">Recent job statuses</h3>
   <div class="nav-container">
     <%= erb :_paging, locals: { url: "#{root_path}statuses" } %>
     <div class="filter-status">
       Filter Status:
-      <select class="form-control" onchange="setPerPage(this)">
+      <select class="form-control">
         <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
           <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (params[:status]) %>><%= status %></option>
         <% end %>
@@ -69,7 +64,7 @@ function setPerPage(select){
 
     <div class="per-page">
       Per page:
-      <select class="form-control" onchange="setPerPage(this)">
+      <select class="form-control">
         <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
         <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (params[:per_page] || @count) %>><%= num %></option>
         <% end %>
@@ -152,3 +147,5 @@ function setPerPage(select){
     </tr>
   <% end %>
 </table>
+  <script type="text/javascript" src="<%= root_path %>javascripts/statuses.js">
+</script>
