@@ -45,6 +45,19 @@ describe Sidekiq::Status::ServerMiddleware do
       expect(Sidekiq::Status::failed?(job_id)).to be_truthy
     end
 
+    context "when first argument is a string containing substring 'job_class'" do
+      it "uses the default class name" do
+        allow(SecureRandom).to receive(:hex).once.and_return(job_id)
+        start_server do
+          expect(capture_status_updates(3) {
+            expect(ConfirmationJob.perform_async 'a string with job_class inside').to eq(job_id)
+          }).to eq([job_id]*3)
+        end
+        expect(redis.hget("sidekiq:status:#{job_id}", :status)).to eq('complete')
+        expect(Sidekiq::Status::get_all(job_id)).to include('worker' => 'ConfirmationJob')
+      end
+    end
+
     context "when Sidekiq::Status::Worker is not included in the job" do
       it "should not set a failed status" do
         allow(SecureRandom).to receive(:hex).once.and_return(job_id)

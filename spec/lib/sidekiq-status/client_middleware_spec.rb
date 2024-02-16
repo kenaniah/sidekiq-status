@@ -38,6 +38,14 @@ describe Sidekiq::Status::ClientMiddleware do
       end
     end
 
+    context "when first argument is a string containing substring 'job_class'" do
+      it "uses the constantized class name" do
+        expect(StubJob.perform_async 'a string with job_class inside').to eq(job_id)
+        expect(redis.hget("sidekiq:status:#{job_id}", :status)).to eq('queued')
+        expect(Sidekiq::Status::queued?(job_id)).to be_truthy
+        expect(Sidekiq::Status::get_all(job_id)).to include('worker' => 'StubJob')
+      end
+    end
   end
 
   describe "with :expiration parameter" do

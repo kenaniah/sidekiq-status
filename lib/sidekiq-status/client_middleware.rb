@@ -22,7 +22,7 @@ module Sidekiq::Status
     def call(worker_class, msg, queue, redis_pool=nil)
 
       # Determine the actual job class
-      klass = msg["args"][0]["job_class"] || worker_class rescue worker_class
+      klass = (!msg["args"][0].is_a?(String) && msg["args"][0]["job_class"]) || worker_class rescue worker_class
       job_class = if klass.is_a?(Class)
                     klass
                   elsif Module.const_defined?(klass)
