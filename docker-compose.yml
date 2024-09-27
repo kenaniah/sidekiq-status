@@ -1,0 +1,15 @@
+# Run the test suite with docker compose
+services:
+  sidekiq-status:
+    build: .
+    environment:
+      - REDIS_URL=redis://redis
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: bundle exec rake
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.4.0
