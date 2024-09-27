@@ -21,7 +21,8 @@ module Sidekiq::Status::Worker
     read_field_for_id @provider_job_id || @job_id || @jid || "", name
   end
 
-  # Sets current task progress
+  # Sets current task progress. This will stop the job if `.stop!` has been
+  # called with this job's ID.
   # (inspired by resque-status)
   # @param Fixnum number of tasks done
   # @param String optional message
@@ -30,6 +31,7 @@ module Sidekiq::Status::Worker
     @_status_total = 100 if @_status_total.nil?
     pct_complete = ((num / @_status_total.to_f) * 100).to_i rescue 0
     store(at: num, total: @_status_total, pct_complete: pct_complete, message: message, working_at: working_at)
+    raise Stopped if retrieve(:stop) == 'true'
   end
 
   # Sets total number of tasks

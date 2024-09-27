@@ -138,6 +138,20 @@ describe Sidekiq::Status do
     end
   end
 
+  describe ".stop!" do
+    it "allows a job to be stopped" do
+      allow(SecureRandom).to receive(:hex).once.and_return(job_id)
+      start_server do
+        expect(capture_status_updates(1) {
+          expect(LongProgressJob.perform_async).to eq(job_id)
+          expect(Sidekiq::Status.stop!(job_id)).to be_truthy
+        }).to eq([job_id]*1)
+      end
+      expect(Sidekiq::Status.at(job_id)).to be(10)
+      expect(Sidekiq::Status.stopped?(job_id)).to be_truthy
+    end
+  end
+
   context "keeps normal Sidekiq functionality" do
     let(:expiration_param) { nil }
 

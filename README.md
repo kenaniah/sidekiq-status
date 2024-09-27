@@ -182,6 +182,21 @@ Sidekiq::Status::working_at job_id #=> 2718
 Sidekiq::Status::update_time job_id #=> 2819
 ```
 
+### Stopping a running job
+
+You can ask a job to stop execution by calling `.stop!` with its job ID. The
+next time the jobs calls `.at` it will raise
+`Sidekiq::Status::Worker::Stopped`. It will not attempt to retry.
+
+```ruby
+job_id = MyJob.perform_async
+Sidekiq::Status.stop!  job_id #=> true
+Sidekiq::Status.status job_id #=> :stopped
+```
+
+Note this will not kill a running job that is stuck. The job must call `.at`
+for it to be stopped in this way.
+
 ### Unscheduling
 
 ```ruby
