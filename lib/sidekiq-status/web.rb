@@ -182,13 +182,20 @@ unless defined?(Sidekiq::Web)
   require 'sidekiq/web'
 end
 
-Sidekiq::Web.register(Sidekiq::Status::Web)
+if Sidekiq.major_version > 6
+  Sidekiq::Web.configure do |config|
+    config.register(Sidekiq::Status::Web, name: "statuses", tab: ["Statuses"], index: "statuses")
+  end
+else
+  Sidekiq::Web.register(Sidekiq::Status::Web)
+  if Sidekiq::Web.tabs.is_a?(Array)
+    # For sidekiq < 2.5
+    Sidekiq::Web.tabs << "statuses"
+  else
+    Sidekiq::Web.tabs["Statuses"] = "statuses"
+  end
+end
+
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
   Sidekiq::WebHelpers::SAFE_QPARAMS.push(key)
-end
-if Sidekiq::Web.tabs.is_a?(Array)
-  # For sidekiq < 2.5
-  Sidekiq::Web.tabs << "statuses"
-else
-  Sidekiq::Web.tabs["Statuses"] = "statuses"
 end
