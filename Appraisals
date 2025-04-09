@@ -7,9 +7,11 @@ appraise "sidekiq-7.x" do
 end
 
 appraise "sidekiq-6.1" do
+  gem "rack", "< 3"
   gem "sidekiq", "~> 6.1"
 end
 
 appraise "sidekiq-6.x" do
+  gem "rack", "< 3"
   gem "sidekiq", "~> 6"
 end
