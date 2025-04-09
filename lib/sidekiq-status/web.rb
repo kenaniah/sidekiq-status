@@ -28,9 +28,6 @@ module Sidekiq::Status
     # @param [Sidekiq::Web] app
     def self.registered(app)
 
-      # Allow method overrides to support RESTful deletes
-      app.set :method_override, true
-
       app.helpers do
         def csrf_tag
           "<input type='hidden' name='authenticity_token' value='#{session[:csrf]}'/>"
