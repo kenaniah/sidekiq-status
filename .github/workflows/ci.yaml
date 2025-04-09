@@ -36,6 +36,9 @@ jobs:
           - "gemfiles/sidekiq_6.x.gemfile"
           - "gemfiles/sidekiq_7.x.gemfile"
           - "gemfiles/sidekiq_8.x.gemfile"
+        exclude:
+          - ruby-version: "3.1"
+            gemfile: "gemfiles/sidekiq_8.x.gemfile" # sidekiq 8.x requires ruby 3.2 or higher
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/${{ matrix.gemfile }}
