@@ -32,6 +32,15 @@ class LongJob < StubJob
   end
 end
 
+class LongProgressJob < StubJob
+  def perform(*args)
+    10.times do
+      at 10
+      sleep (args[0] || 0.25) / 10
+    end
+  end
+end
+
 class DataJob < StubJob
   def perform
     sleep 0.1

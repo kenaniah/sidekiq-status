@@ -42,6 +42,10 @@ module Sidekiq::Status
       delete_status(job_id)
     end
 
+    def stop!(job_id)
+      store_for_id(job_id, {stop: 'true'})
+    end
+
     alias_method :unschedule, :cancel
 
     STATUS.each do |name|
