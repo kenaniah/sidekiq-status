@@ -88,7 +88,7 @@ module Sidekiq::Status
 
   # Helper method to easily configure sidekiq-status server middleware
   # whatever the Sidekiq version is.
-  # @param [Sidekiq] sidekiq_config the Sidekiq config
+  # @param [Sidekiq::Config] sidekiq_config the Sidekiq config
   # @param [Hash] server_middleware_options server middleware initialization options
   # @option server_middleware_options [Fixnum] :expiration ttl for complete jobs
   def self.configure_server_middleware(sidekiq_config, server_middleware_options = {})
