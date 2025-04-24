@@ -34,7 +34,7 @@ module Sidekiq::Status
       expiry = @expiration
 
       # Determine the actual job class
-      klass = msg["args"][0]["job_class"] || msg["class"] rescue msg["class"]
+      klass = (!msg["args"][0].is_a?(String) && msg["args"][0]["job_class"]) || msg["class"] rescue msg["class"]
       job_class = klass.is_a?(Class) ? klass : Module.const_get(klass)
 
       # Bypass unless this is a Sidekiq::Status::Worker job
