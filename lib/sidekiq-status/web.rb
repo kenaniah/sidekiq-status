@@ -1,10 +1,12 @@
 # adapted from https://github.com/cryo28/sidekiq_status
+require_relative 'helpers'
 
 module Sidekiq::Status
   # Hook into *Sidekiq::Web* Sinatra app which adds a new "/statuses" page
   module Web
     # Location of Sidekiq::Status::Web view templates
-    VIEW_PATH = File.expand_path('../../../web/views', __FILE__)
+    ROOT = File.expand_path("../../web", File.dirname(__FILE__))
+    VIEWS = File.expand_path("views", ROOT)
 
     DEFAULT_PER_PAGE_OPTS = [25, 50, 100].freeze
     DEFAULT_PER_PAGE = 25
@@ -27,72 +29,9 @@ module Sidekiq::Status
 
     # @param [Sidekiq::Web] app
     def self.registered(app)
-
-      app.helpers do
-        def csrf_tag
-          "<input type='hidden' name='authenticity_token' value='#{session[:csrf]}'/>"
-        end
-
-        def poll_path
-          "?#{request.query_string}" if params[:poll]
-        end
-
-        def sidekiq_status_template(name)
-          path = File.join(VIEW_PATH, name.to_s) + ".erb"
-          File.open(path).read
-        end
-
-        def add_details_to_status(status)
-          status['label'] = status_label(status['status'])
-          status["pct_complete"] ||= pct_complete(status)
-          status["elapsed"] ||= elapsed(status).to_s
-          status["eta"] ||= eta(status).to_s
-          status["custom"] = process_custom_data(status)
-          return status
-        end
-
-        def process_custom_data(hash)
-          hash.reject { |key, _| COMMON_STATUS_HASH_KEYS.include?(key) }
-        end
-
-        def pct_complete(status)
-          return 100 if status['status'] == 'complete'
-          Sidekiq::Status::pct_complete(status['jid']) || 0
-        end
-
-        def elapsed(status)
-          case status['status']
-          when 'complete'
-            Sidekiq::Status.update_time(status['jid']) - Sidekiq::Status.working_at(status['jid'])
-          when 'working', 'retrying'
-            Time.now.to_i - Sidekiq::Status.working_at(status['jid'])
-          end
-        end
-
-        def eta(status)
-          Sidekiq::Status.eta(status['jid']) if status['status'] == 'working'
-        end
-
-        def status_label(status)
-          case status
-          when 'complete'
-            'success'
-          when 'working', 'retrying'
-            'warning'
-          when 'queued'
-            'primary'
-          else
-            'danger'
-          end
-        end
-
-        def has_sort_by?(value)
-          ["worker", "status", "update_time", "pct_complete", "message", "args"].include?(value)
-        end
-      end
+      app.helpers Web::Helpers
 
       app.get '/statuses' do
-
         jids = Sidekiq::Status.redis_adapter do |conn|
           conn.scan(match: 'sidekiq:status:*', count: 100).map do |key|
             key.split(':').last
@@ -107,25 +46,25 @@ module Sidekiq::Status
           @statuses << status
         end
 
-        sort_by = has_sort_by?(params[:sort_by]) ? params[:sort_by] : "update_time"
+        sort_by = has_sort_by?(safe_url_params("sort_by")) ? safe_url_params("sort_by") : "update_time"
         sort_dir = "asc"
 
-        if params[:sort_dir] == "asc"
+        if safe_url_params("sort_dir") == "asc"
           @statuses = @statuses.sort { |x,y| (x[sort_by] <=> y[sort_by]) || -1 }
         else
           sort_dir = "desc"
           @statuses = @statuses.sort { |y,x| (x[sort_by] <=> y[sort_by]) || 1 }
         end
 
-        if params[:status] && params[:status] != "all"
-          @statuses = @statuses.select {|job_status| job_status["status"] == params[:status] }
+        if safe_url_params("status") && safe_url_params("status") != "all"
+          @statuses = @statuses.select {|job_status| job_status["status"] == safe_url_params("status") }
         end
 
         # Sidekiq pagination
         @total_size = @statuses.count
-        @count = params[:per_page] ? params[:per_page].to_i : Sidekiq::Status::Web.default_per_page
-        @count = @total_size if params[:per_page] == 'all'
-        @current_page = params[:page].to_i < 1 ? 1 : params[:page].to_i
+        @count = safe_url_params("per_page") ? safe_url_params("per_page").to_i : Sidekiq::Status::Web.default_per_page
+        @count = @total_size if safe_url_params("per_page") == 'all'
+        @current_page = safe_url_params("page").to_i < 1 ? 1 : safe_url_params("page").to_i
         @statuses = @statuses.slice((@current_page - 1) * @count, @count)
 
         @headers = [
@@ -139,35 +78,39 @@ module Sidekiq::Status
         ]
 
         @headers.each do |h|
-          h[:url] = "statuses?" + params.merge("sort_by" => h[:id], "sort_dir" => (sort_by == h[:id] && sort_dir == "asc") ? "desc" : "asc").map{|k, v| "#{k}=#{CGI.escape v.to_s}"}.join("&")
+          h[:url] = "statuses?" + qparams(
+            "sort_by" => h[:id],
+            "sort_dir" => (sort_by == h[:id] && sort_dir == "asc") ? "desc" : "asc"
+          )
           h[:class] = "sorted_#{sort_dir}" if sort_by == h[:id]
         end
 
-        erb(sidekiq_status_template(:statuses))
+        erb(:statuses, views: VIEWS)
       end
 
       app.get '/statuses/:jid' do
-        job = Sidekiq::Status::get_all params['jid']
+        job = Sidekiq::Status::get_all safe_route_params(:jid)
 
         if job.empty?
-          throw :halt, [404, {"Content-Type" => "text/html"}, [erb(sidekiq_status_template(:status_not_found))]]
+          throw :halt, [404, {"Content-Type" => "text/html"}, [erb(:status_not_found, views: VIEWS)]]
         else
           @status = add_details_to_status(job)
-          erb(sidekiq_status_template(:status))
+
+          erb(:status, views: VIEWS)
         end
       end
 
       # Retries a failed job from the status list
       app.put '/statuses' do
-        job = Sidekiq::RetrySet.new.find_job(params[:jid])
-        job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
+j       job = Sidekiq::RetrySet.new.find_job(safe_url_params("jid"))
+        job ||= Sidekiq::DeadSet.new.find_job(safe_url_params("jid"))
         job.retry if job
         throw :halt, [302, { "Location" => request.referer }, []]
       end
 
       # Removes a completed job from the status list
       app.delete '/statuses' do
-        Sidekiq::Status.delete(params[:jid])
+        Sidekiq::Status.delete(safe_url_params("jid"))
         throw :halt, [302, { "Location" => request.referer }, []]
       end
     end
@@ -181,7 +124,18 @@ end
 
 if Sidekiq.major_version > 6
   Sidekiq::Web.configure do |config|
-    config.register(Sidekiq::Status::Web, name: "statuses", tab: ["Statuses"], index: "statuses")
+    if Sidekiq.major_version >= 8
+      config.register_extension(
+        Sidekiq::Status::Web,
+        name: "statuses",
+        tab: ["Statuses"],
+        index: ["statuses"],
+        root_dir: Sidekiq::Status::Web::ROOT,
+        asset_paths: ["images", "javascripts", "stylesheets"]
+      )
+    else
+      config.register(Sidekiq::Status::Web, name: "statuses", tab: ["Statuses"], index: "statuses")
+    end
   end
 else
   Sidekiq::Web.register(Sidekiq::Status::Web)

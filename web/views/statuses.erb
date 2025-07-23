@@ -1,77 +1,24 @@
 <% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
-<style>
-.progress {
-  background-color: #C8E1ED;
-}
-.bar {
-  background-color: #2897cb;
-  color: white;
-  text-shadow: 0 0 0;
-}
-.message {
-  text-shadow: 0 0 5px white;
-  font-weight: bold; padding-left: 4px;
-  color: #333;
-}
-.actions {
-  text-align: center;
-}
-.header {
-  text-align: center;
-}
-.header_update_time {
-  width: 10%;
-}
-.header_pct_complete {
-  width: 45%;
-}
-.btn-warning {
-  background-image: linear-gradient(#f0ad4e, #eea236)
-}
-.nav-container {
-  display: flex;
-  line-height: 45px;
-}
-.nav-container .pull-right {
-  float: none !important;
-}
-.nav-container .pagination {
-  display: flex;
-  align-items: center;
-}
-.nav-container .per-page, .filter-status {
-  display: flex;
-  align-items: center;
-  margin: 20px 0 20px 10px;
-  white-space: nowrap;
-}
-.nav-container .per-page SELECT {
-  margin: 0 0 0 5px;
-}
-</style>
-<script>
-function setPerPage(select){
-  window.location = select.options[select.selectedIndex].getAttribute('data-url')
-}
-</script>
+<%= style_tag "statuses/stylesheets/styles.css" %>
+<%= script_tag "statuses/javascripts/scripts.js" %>
 <div style="display: flex; justify-content: space-between;">
   <h3 class="wi">Recent job statuses</h3>
   <div class="nav-container">
     <%= erb :_paging, locals: { url: "#{root_path}statuses" } %>
     <div class="filter-status">
       Filter Status:
-      <select class="form-control" onchange="setPerPage(this)">
+      <select class="form-control" onchange="handleStatusesSelectChange(this)">
         <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
-          <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (params[:status]) %>><%= status %></option>
+          <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (safe_url_params("status")) %>><%= status %></option>
         <% end %>
       </select>
     </div>
 
     <div class="per-page">
       Per page:
-      <select class="form-control" onchange="setPerPage(this)">
+      <select class="form-control" onchange="handleStatusesSelectChange(this)">
         <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
-        <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (params[:per_page] || @count) %>><%= num %></option>
+        <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (safe_url_params("per_page") || @count) %>><%= num %></option>
         <% end %>
       </select>
     </div>

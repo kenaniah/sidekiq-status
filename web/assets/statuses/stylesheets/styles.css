@@ -1,0 +1,58 @@
+.progress {
+  background-color: #C8E1ED;
+}
+.progress-percentage {
+  margin: 5px;
+  padding-left: 4px;
+  color: #333;
+  text-align: left;
+  text-shadow: 0 0 5px white;
+  font-weight: bold;
+  font-size: 14px;
+}
+.bar {
+  background-color: #2897cb;
+  color: white;
+  text-shadow: 0 0 0;
+}
+.message {
+  text-shadow: 0 0 5px white;
+  font-weight: bold; padding-left: 4px;
+  color: #333;
+}
+.actions {
+  text-align: center;
+}
+.header {
+  text-align: center;
+}
+.header_update_time {
+  width: 10%;
+}
+.header_pct_complete {
+  width: 45%;
+}
+.btn-warning {
+  background-image: linear-gradient(#f0ad4e, #eea236)
+}
+.nav-container {
+  display: flex;
+  line-height: 45px;
+}
+.nav-container .pull-right {
+  float: none !important;
+}
+.nav-container .pagination {
+  display: flex;
+  align-items: center;
+}
+.nav-container .per-page, .filter-status {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 20px 10px;
+  white-space: nowrap;
+}
+.nav-container .per-page SELECT {
+  margin: 0 0 0 5px;
+}
+
