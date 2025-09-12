@@ -2,7 +2,6 @@
 
 source "https://rubygems.org"
 
-gem "rack", "< 3"
-gem "sidekiq", "~> 6.1"
+gem "sidekiq", "~> 8"
 
 gemspec path: "../"

@@ -1,0 +1,23 @@
+.message {
+  text-shadow: 0 0 5px white;
+  font-weight: bold;
+  padding-left: 4px;
+  color: #333;
+}
+
+.text-center-nowrap {
+  text-align: center;
+  white-space: nowrap;
+}
+
+.progress-inline {
+  margin-bottom: 0;
+}
+
+.message-overlay {
+  text-align: right;
+  padding-right: 0.5em;
+  background-color: transparent;
+  float: right;
+}
+
