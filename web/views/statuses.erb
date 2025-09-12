@@ -1,95 +1,100 @@
-<% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
-<%= style_tag "statuses/stylesheets/styles.css" %>
+<% style_tag "statuses/stylesheets/styles.css" %>
 <%= script_tag "statuses/javascripts/scripts.js" %>
-<div style="display: flex; justify-content: space-between;">
-  <h3 class="wi">Recent job statuses</h3>
-  <div class="nav-container">
-    <%= erb :_paging, locals: { url: "#{root_path}statuses" } %>
-    <div class="filter-status">
-      Filter Status:
-      <select class="form-control" onchange="handleStatusesSelectChange(this)">
-        <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
-          <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (safe_url_params("status")) %>><%= status %></option>
-        <% end %>
-      </select>
+<section>
+  <header>
+    <h1>Recent job statuses</h1>
+    <div class="filter">
+      <form class="form-inline" method="get">
+        <label>Filter Status:</label>
+        <select class="form-control" id="sidekiq-status-select-status-name" name="status">
+          <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
+            <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected' if status == (safe_url_params("status") || 'all') %>><%= status %></option>
+          <% end %>
+        </select>
+
+        <label>Per page:</label>
+        <select class="form-control" id="sidekiq-status-select-per-page" name="per_page">
+          <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
+            <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected' if num.to_s == (safe_url_params("per_page") || @count) %>><%= num %></option>
+          <% end %>
+        </select>
+
+        <input type="hidden" name="page" value="1">
+      </form>
     </div>
 
-    <div class="per-page">
-      Per page:
-      <select class="form-control" onchange="handleStatusesSelectChange(this)">
-        <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
-        <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (safe_url_params("per_page") || @count) %>><%= num %></option>
-        <% end %>
-      </select>
-    </div>
-  </div>
-</div>
-<table class="table table-hover table-bordered table-striped">
-  <tr>
-    <% @headers.each do |hdr| %>
-      <th class="header <%= h hdr[:class] %> header_<%= h hdr[:id] %>">
-        <a href="<%= h hdr[:url] %>"><%= h hdr[:name] %></a>
+    <%= erb :_paging, locals: { url: "#{root_path}statuses" } %>
+  </header>
+
+  <div class="table_container">
+    <table>
+  <thead>
+    <tr>
+      <% @headers.each do |hdr| %>
+        <th class="<%= ['status', 'update_time', 'pct_complete', 'elapsed', 'eta'].include?(hdr[:id]) ? 'text-center-nowrap' : '' %>">
+          <a href="<%= h hdr[:url] %>"><%= h hdr[:name] %></a>
+        </th>
+      <% end %>
+      <th>
+        Actions
       </th>
-    <% end %>
-    <th class="header">
-      Actions
-    </th>
-  </tr>
+    </tr>
+  </thead>
   <% @statuses.each do |container| %>
     <tr>
       <td>
         <div title='<%= h container["jid"] %>'><a href="<%= root_path %>statuses/<%= h container["jid"] %>"><%= h container["worker"] %></a></div>
       </td>
       <td>
-        <div class='args' title='<%= h container["jid"] %>'><%= h container["args"] %></div>
+        <div title='<%= h container["jid"] %>'>
+          <code><div class="args"><%= h container["args"] %></div></code>
+        </div>
       </td>
-      <td style='text-align: center;'>
+      <td class="text-center-nowrap">
         <div class='label label-<%= h container["label"] %>'><%= h container["status"] %></div>
       </td>
       <% secs = Time.now.to_i - container["update_time"].to_i %>
-      <td style='text-align: center; white-space: nowrap;' title="<%= Time.at(container["update_time"].to_i) %>">
+      <td class="text-center-nowrap" title="<%= Time.at(container["update_time"].to_i) %>">
         <% if secs > 0 %>
           <%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago
         <% else %>
           Now
         <% end %>
       </td>
-      <td>
-        <div class="progress progress-striped" style="margin-bottom: 0">
-          <div class='message' style='text-align:right; padding-right:0.5em; background-color: transparent; float:right;'>
+      <td class="text-center-nowrap">
+        <div class="progress progress-striped progress-inline">
+          <div class='message message-overlay'>
             <%= h container["message"] %>
           </div>
           <% if container["pct_complete"].to_i > 0 %>
-            <div class="bar message" style="width: <%= h container["pct_complete"] %>%;">
+            <div class="progress-bar message" data-width="<%= h container["pct_complete"] %>">
               <%= h container["pct_complete"] %>%
             </div>
           <% end %>
         </div>
       </td>
-      <td style='text-align: center; white-space: nowrap;'>
+      <td class="text-center-nowrap">
         <% if container["elapsed"] %>
           <%= ChronicDuration.output(container["elapsed"].to_i, :weeks => true, :units => 2) %>
         <% end %>
       </td>
-      <td style='text-align: center; white-space: nowrap;'>
+      <td class="text-center-nowrap">
         <% if container["eta"] %>
           <%= ChronicDuration.output(container["eta"].to_i, :weeks => true, :units => 2) %>
         <% end %>
       </td>
       <td>
-        <div class="actions">
-          <form action="statuses" method="post">
+        <form action="statuses" method="post">
             <input type="hidden" name="jid" value="<%= h container["jid"] %>" />
             <%= csrf_tag %>
             <% if container["status"] == "complete" %>
               <input type="hidden" name="_method" value="delete" />
-              <input type="submit" class="btn btn-danger btn-xs" value="Remove" />
+              <input type="submit" class="btn btn-danger" value="Remove" />
             <% elsif container["status"] == "failed" %>
               <input type="hidden" name="_method" value="put" />
-              <input type="submit" class="btn btn-warning btn-xs" value="Retry Now" />
+              <input type="submit" class="btn btn-warn" value="Retry Now" />
             <% end %>
-          </form>
-        </div>
+        </form>
       </td>
     </tr>
   <% end %>
@@ -98,4 +103,6 @@
       <td colspan="6"></td>
     </tr>
   <% end %>
-</table>
+    </table>
+  </div>
+</section>

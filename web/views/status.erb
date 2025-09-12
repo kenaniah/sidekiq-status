@@ -1,104 +1,63 @@
-<% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
-<%= style_tag "statuses/stylesheets/styles.css" %>
-<h3>
-  Job Status: <%= h @status["jid"] %>
-  <span class='label label-<%= h @status["label"] %>'>
-    <%= h @status["status"] %>
-  </span>
-</h3>
+<% style_tag "statuses/stylesheets/styles.css" %>
+<section>
+  <header>
+    <h1>
+      Job Status: <%= h @status["jid"] %>
+      <span class='label-<%= h @status["label"] %>'>
+        <%= h @status["status"] %>
+      </span>
+    </h1>
+  </header>
 
-<div class="progress" style="height: 30px;">
-  <div class="progress-bar" role="progressbar" aria-valuenow="<%= @status["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= @status["pct_complete"].to_i %>%">
-    <div class="progress-percentage">
-      <%= @status["pct_complete"].to_i %>%
-    </div>
+  <div class="progress">
+  <div class="progress-bar" role="progressbar" aria-valuenow="<%= @status["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100" data-width="<%= @status["pct_complete"].to_i %>">
+    <%= @status["pct_complete"].to_i %>%
   </div>
-</div>
+  </div>
 
-<div class="panel panel-default" style="background-color: inherit">
-  <div class="panel-body">
+  <div class="container">
     <h4><%= h @status["worker"] %></h4>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Arguments</strong>
-      </div>
-      <div class="col-sm-10">
-        <p><%= @status["args"].empty? ? "<i>none</i>" : h(@status["args"]) %></p>
-      </div>
-    </div>
+    <p><strong>Arguments:</strong> <%= @status["args"].empty? ? "<i>none</i>" : h(@status["args"]) %></p>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Message</strong>
-      </div>
-      <div class="col-sm-10">
-        <p><%= h(@status["message"]) || "<i>none</i>" %></p>
-      </div>
-    </div>
+    <p><strong>Message:</strong> <%= h(@status["message"]) || "<i>none</i>" %></p>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Last Updated</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% secs = Time.now.to_i - @status["update_time"].to_i %>
-          <% if secs > 0 %>
-            <%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago
-          <% else %>
-            Now
-          <% end %>
-        </p>
-      </div>
-    </div>
+    <p><strong>Last Updated:</strong>
+      <% secs = Time.now.to_i - @status["update_time"].to_i %>
+      <% if secs > 0 %>
+        <%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago
+      <% else %>
+        Now
+      <% end %>
+    </p>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Elapsed Time</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% if @status["elapsed"] %>
-            <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) %>
-          <% end %>
-        </p>
-      </div>
-    </div>
+    <p><strong>Elapsed Time:</strong>
+      <% if @status["elapsed"] %>
+        <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) %>
+      <% end %>
+    </p>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>ETA</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% if @status["eta"] %>
-            <%= ChronicDuration.output(@status["eta"].to_i, :weeks => true, :units => 2) %>
-          <% end %>
-        </p>
-      </div>
-    </div>
+    <p><strong>ETA:</strong>
+      <% if @status["eta"] %>
+        <%= ChronicDuration.output(@status["eta"].to_i, :weeks => true, :units => 2) %>
+      <% end %>
+    </p>
 
     <% if @status["custom"].any? %>
       <hr>
       <% @status["custom"].each do |key, val| %>
-        <div class="row">
-          <div class="col-sm-2">
-            <strong><%= key %></strong>
-          </div>
-          <div class="col-sm-10">
-            <% if val && val.include?("\n") %>
-              <pre><%= h val %></pre>
-            <% else  %>
-              <p><%= h(val) || "<i>none</i>" %></p>
-            <% end %>
-          </div>
-        </div>
+        <p><strong><%= key %>:</strong>
+          <% if val && val.include?("\n") %>
+            <pre><%= h val %></pre>
+          <% else  %>
+            <%= h(val) || "<i>none</i>" %>
+          <% end %>
+        </p>
       <% end %>
     <% end %>
   </div>
-</div>
 
-<a href="<%= root_path %>statuses">
-  <small>&larr; back to all statuses</small>
-</a>
+  <a href="<%= root_path %>statuses">
+    <small>&larr; back to all statuses</small>
+  </a>
+</section>

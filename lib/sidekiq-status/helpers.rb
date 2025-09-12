@@ -63,7 +63,7 @@ module Sidekiq::Status
         when 'working', 'retrying'
           'warning'
         when 'queued'
-          'primary'
+          'info'
         else
           'danger'
         end
