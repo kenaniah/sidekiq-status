@@ -28,18 +28,18 @@
 
   <div class="table_container">
     <table>
-  <thead>
-    <tr>
-      <% @headers.each do |hdr| %>
-        <th class="<%= ['status', 'update_time', 'pct_complete', 'elapsed', 'eta'].include?(hdr[:id]) ? 'text-center-nowrap' : '' %>">
-          <a href="<%= h hdr[:url] %>"><%= h hdr[:name] %></a>
-        </th>
-      <% end %>
-      <th>
-        Actions
-      </th>
-    </tr>
-  </thead>
+      <thead>
+        <tr>
+          <% @headers.each do |hdr| %>
+            <th class="<%= ['status', 'update_time', 'pct_complete', 'elapsed', 'eta'].include?(hdr[:id]) ? 'text-center-nowrap' : '' %>">
+              <a href="<%= h hdr[:url] %>"><%= h hdr[:name] %></a>
+            </th>
+          <% end %>
+          <th>
+            Actions
+          </th>
+        </tr>
+      </thead>
   <% @statuses.each do |container| %>
     <tr>
       <td>
