@@ -102,7 +102,7 @@ module Sidekiq::Status
 
       # Retries a failed job from the status list
       app.put '/statuses' do
-j       job = Sidekiq::RetrySet.new.find_job(safe_url_params("jid"))
+        job = Sidekiq::RetrySet.new.find_job(safe_url_params("jid"))
         job ||= Sidekiq::DeadSet.new.find_job(safe_url_params("jid"))
         job.retry if job
         throw :halt, [302, { "Location" => request.referer }, []]
