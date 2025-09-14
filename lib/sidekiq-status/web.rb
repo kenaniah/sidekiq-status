@@ -33,7 +33,7 @@ module Sidekiq::Status
 
       app.helpers do
         def csrf_tag
-          "<input type='hidden' name='authenticity_token' value='#{session[:csrf]}'/>"
+          "<input type='hidden' name='authenticity_token' value='#{env[:csrf_token]}'/>"
         end
 
         def poll_path
@@ -157,6 +157,24 @@ module Sidekiq::Status
         else
           @status = add_details_to_status(job)
           erb(sidekiq_status_template(:status))
+        end
+      end
+
+      # Handles POST requests with method override for statuses
+      app.post '/statuses' do
+        case params[:_method]
+        when 'put'
+          # Retries a failed job from the status list
+          job = Sidekiq::RetrySet.new.find_job(params[:jid])
+          job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
+          job.retry if job
+          throw :halt, [302, { "Location" => request.referer }, []]
+        when 'delete'
+          # Removes a completed job from the status list
+          Sidekiq::Status.delete(params[:jid])
+          throw :halt, [302, { "Location" => request.referer }, []]
+        else
+          throw :halt, [405, {"Content-Type" => "text/html"}, ["Method not allowed"]]
         end
       end
 
