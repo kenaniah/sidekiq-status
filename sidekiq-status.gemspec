@@ -16,6 +16,8 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency                  'sidekiq', '>= 6.0', '< 8'
   gem.add_dependency                  'chronic_duration'
+  gem.add_dependency                  'logger'
+  gem.add_dependency                  'base64'
   gem.add_development_dependency      'appraisal'
   gem.add_development_dependency      'colorize'
   gem.add_development_dependency      'rack-test'
