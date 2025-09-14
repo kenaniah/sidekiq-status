@@ -10,7 +10,7 @@ describe 'sidekiq status web' do
   let!(:job_id) { SecureRandom.hex(12) }
 
   def app
-    Sidekiq::Web
+    @app ||= Sidekiq::Web.new
   end
 
   before do
