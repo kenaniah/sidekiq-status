@@ -3,5 +3,6 @@
 source "https://rubygems.org"
 
 gem "sidekiq", "~> 6"
+gem "rack", "~> 2"
 
 gemspec path: "../"
