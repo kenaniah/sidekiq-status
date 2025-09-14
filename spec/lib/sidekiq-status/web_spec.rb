@@ -10,13 +10,14 @@ describe 'sidekiq status web' do
   let!(:job_id) { SecureRandom.hex(12) }
 
   def app
-    Sidekiq::Web
+    @app ||= Sidekiq::Web.new
   end
 
   before do
-    env 'rack.session', csrf: Base64.urlsafe_encode64('token')
-    client_middleware
     allow(SecureRandom).to receive(:hex).and_return(job_id)
+    # Set up a basic session for Sidekiq's CSRF protection
+    env 'rack.session', {}
+    client_middleware
   end
 
   around { |example| start_server(&example) }
@@ -81,5 +82,72 @@ describe 'sidekiq status web' do
     get '/statuses/12345'
     expect(last_response).to be_not_found
     expect(last_response.body).to match(/That job can't be found/)
+  end
+
+  it 'handles POST with PUT method override for retrying failed jobs' do
+    # Create a failed job first
+    capture_status_updates(3) do
+      FailingJob.perform_async
+    end
+
+    # First make a GET request to establish the session and get the CSRF token
+    get '/statuses'
+    expect(last_response).to be_ok
+
+    # Extract the CSRF token from the environment
+    csrf_token = last_request.env[:csrf_token]
+
+    # Simulate the retry form submission with a referer header
+    header 'Referer', 'http://example.com/statuses'
+    post '/statuses', {
+      'jid' => job_id,
+      '_method' => 'put',
+      'authenticity_token' => csrf_token
+    }
+
+    expect(last_response.status).to eq(302)
+    expect(last_response.headers['Location']).to eq('http://example.com/statuses')
+  end
+
+  it 'handles POST with DELETE method override for removing completed jobs' do
+    # Create a completed job first
+    capture_status_updates(2) do
+      StubJob.perform_async
+    end
+
+    # First make a GET request to establish the session and get the CSRF token
+    get '/statuses'
+    expect(last_response).to be_ok
+
+    # Extract the CSRF token from the environment
+    csrf_token = last_request.env[:csrf_token]
+
+    # Simulate the remove form submission with a referer header
+    header 'Referer', 'http://example.com/statuses'
+    post '/statuses', {
+      'jid' => job_id,
+      '_method' => 'delete',
+      'authenticity_token' => csrf_token
+    }
+
+    expect(last_response.status).to eq(302)
+    expect(last_response.headers['Location']).to eq('http://example.com/statuses')
+    expect(Sidekiq::Status.status(job_id)).to be_nil
+  end
+
+  it 'returns 405 for POST without valid method override' do
+    # First make a GET request to establish the session and get the CSRF token
+    get '/statuses'
+    expect(last_response).to be_ok
+
+    # Extract the CSRF token from the environment
+    csrf_token = last_request.env[:csrf_token]
+
+    post '/statuses', {
+      'jid' => job_id,
+      'authenticity_token' => csrf_token
+    }
+
+    expect(last_response.status).to eq(405)
   end
 end

@@ -33,7 +33,7 @@ module Sidekiq::Status
 
       app.helpers do
         def csrf_tag
-          "<input type='hidden' name='authenticity_token' value='#{session[:csrf]}'/>"
+          "<input type='hidden' name='authenticity_token' value='#{env[:csrf_token]}'/>"
         end
 
         def poll_path
@@ -91,6 +91,18 @@ module Sidekiq::Status
 
         def has_sort_by?(value)
           ["worker", "status", "update_time", "pct_complete", "message", "args"].include?(value)
+        end
+
+        def retry_job_action
+          job = Sidekiq::RetrySet.new.find_job(params[:jid])
+          job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
+          job.retry if job
+          throw :halt, [302, { "Location" => request.referer }, []]
+        end
+
+        def delete_job_action
+          Sidekiq::Status.delete(params[:jid])
+          throw :halt, [302, { "Location" => request.referer }, []]
         end
       end
 
@@ -160,18 +172,28 @@ module Sidekiq::Status
         end
       end
 
+      # Handles POST requests with method override for statuses
+      app.post '/statuses' do
+        case params[:_method]
+        when 'put'
+          # Retries a failed job from the status list
+          retry_job_action
+        when 'delete'
+          # Removes a completed job from the status list
+          delete_job_action
+        else
+          throw :halt, [405, {"Content-Type" => "text/html"}, ["Method not allowed"]]
+        end
+      end
+
       # Retries a failed job from the status list
       app.put '/statuses' do
-        job = Sidekiq::RetrySet.new.find_job(params[:jid])
-        job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
-        job.retry if job
-        throw :halt, [302, { "Location" => request.referer }, []]
+        retry_job_action
       end
 
       # Removes a completed job from the status list
       app.delete '/statuses' do
-        Sidekiq::Status.delete(params[:jid])
-        throw :halt, [302, { "Location" => request.referer }, []]
+        delete_job_action
       end
     end
   end
