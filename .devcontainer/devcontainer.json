@@ -12,7 +12,6 @@
   "customizations": {
     "vscode": {
       "extensions": [
-        "rebornix.Ruby",
         "Shopify.ruby-lsp",
         "kaiwood.endwise",
         "ms-vscode.vscode-json",
@@ -50,7 +49,7 @@
     }
   },
 
-  "postCreateCommand": "bundle install",
+  "postCreateCommand": "git config --global --add safe.directory /workspace && bundle install",
 
   "remoteUser": "vscode"
 }
