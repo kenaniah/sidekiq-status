@@ -4,7 +4,7 @@
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
-Requires Ruby 2.6+ and Sidekiq 6.0+ or newer.
+Supports Ruby 3.2+ and Sidekiq 6.0+ or newer.
 
 ## Installation
 
@@ -19,6 +19,10 @@ Or install it yourself as:
 ```bash
 gem install sidekiq-status
 ```
+
+### Migrating to Version 4.x from 3.x (Note... 4.x isn't released yet)
+
+Version 4.0.0 was published in order to add support for Ruby 3.4.x and Sidekiq 8.x and to remove support for Ruby versions of both that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x). **You should be able to upgrade cleanly from version 3.x to 4.x provided you are running Sidekiq 7.x or newer.**
 
 ### Migrating to Version 3.x from 2.x
 
@@ -267,6 +271,115 @@ To use `sidekiq-status` inlining, require it too in your `{test,spec}_helper.rb`
 require 'sidekiq-status/testing/inline'
 ```
 
+### Development Environment
+
+This project includes a development container (devcontainer) configuration that provides a consistent development environment with all necessary dependencies pre-installed.
+
+#### Using VS Code Dev Containers
+
+The easiest way to get started is using VS Code with the Dev Containers extension:
+
+1. Install [VS Code](https://code.visualstudio.com/) and the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)
+2. Clone this repository
+3. Open the repository in VS Code
+4. When prompted, click "Reopen in Container" or use the Command Palette (`Ctrl+Shift+P`) and select "Dev Containers: Reopen in Container"
+
+The devcontainer will automatically:
+- Set up Ruby with all required dependencies
+- Install and configure Redis
+- Run `bundle install` to install gems
+- Configure VS Code with recommended extensions and settings
+
+#### Manual Docker Setup
+
+If you prefer not to use VS Code, you can still use the development environment with Docker:
+
+```bash
+# Build and start the development environment
+docker compose -f .devcontainer/docker-compose.yml up -d
+
+# Enter the development container
+docker compose -f .devcontainer/docker-compose.yml exec app bash
+
+# Install dependencies
+bundle install
+```
+
+### Testing Across Multiple Sidekiq Versions
+
+This project uses [Appraisal](https://github.com/thoughtbot/appraisal) to test against multiple versions of Sidekiq. The gem is configured to test against:
+
+- Sidekiq 6.1.x
+- Sidekiq 6.x (latest)
+- Sidekiq 7.x (latest)
+
+#### Installing Dependencies for All Versions
+
+To install dependencies for all supported Sidekiq versions:
+
+```bash
+# Install appraisal and generate gemfiles
+bundle exec appraisal install
+```
+
+This will:
+1. Install the base dependencies from `Gemfile`
+2. Generate specific gemfiles in the `gemfiles/` directory for each Sidekiq version
+3. Install dependencies for each version
+
+#### Running Tests
+
+You can run tests in several ways:
+
+**Run tests for all Sidekiq versions:**
+```bash
+bundle exec appraisal rake spec
+```
+
+**Run tests for a specific Sidekiq version:**
+```bash
+# Test against Sidekiq 6.1
+bundle exec appraisal sidekiq-6.1 rake spec
+
+# Test against Sidekiq 6.x
+bundle exec appraisal sidekiq-6.x rake spec
+
+# Test against Sidekiq 7.x
+bundle exec appraisal sidekiq-7.x rake spec
+```
+
+**Run tests using the current Gemfile:**
+```bash
+bundle exec rake spec
+# or simply
+rake spec
+```
+
+**Quick test run using Docker Compose:**
+```bash
+docker compose run --rm sidekiq-status
+```
+
+#### Updating Gemfiles
+
+When dependencies change, regenerate the appraisal gemfiles:
+
+```bash
+bundle exec appraisal generate
+```
+
+#### Debugging Test Failures
+
+If tests fail for a specific Sidekiq version, you can debug by running that specific environment:
+
+```bash
+# Start a console with Sidekiq 6.1 dependencies
+bundle exec appraisal sidekiq-6.1 irb
+
+# Or run a specific test file
+bundle exec appraisal sidekiq-6.1 rspec spec/lib/sidekiq-status/worker_spec.rb
+```
+
 ## Contributing
 
 Bug reports and pull requests are welcome. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](contributor-covenant.org) code of conduct.
@@ -277,14 +390,6 @@ Bug reports and pull requests are welcome. This project is intended to be a safe
 4. If possible squash your commits to one commit if they all belong to same feature.
 5. Push to the branch (`git push origin my-new-feature`)
 6. Create new Pull Request.
-
-### Running the Test Suite
-
-You can use `docker compose` to easily run the test suite:
-
-```
-docker compose run --rm sidekiq-status
-```
 
 ## Thanks
 * Pramod Shinde

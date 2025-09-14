@@ -1,0 +1,19 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace:cached
+    working_dir: /workspace
+    environment:
+      - REDIS_URL=redis://redis:6379
+    command: sleep infinity
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:7.4.0
+    restart: unless-stopped
+    ports:
+      - "6379:6379"

@@ -1,0 +1,55 @@
+{
+  "name": "Sidekiq Status Development",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "Shopify.ruby-lsp",
+        "kaiwood.endwise",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-azuretools.vscode-docker",
+        "formulahendry.auto-rename-tag",
+        "streetsidesoftware.code-spell-checker"
+      ],
+      "settings": {
+        "ruby.useLanguageServer": true,
+        "ruby.lint": {
+          "rubocop": {
+            "useBundler": true
+          }
+        },
+        "ruby.format": "rubocop",
+        "files.associations": {
+          "*.rb": "ruby",
+          "Gemfile": "ruby",
+          "Rakefile": "ruby",
+          "*.gemspec": "ruby"
+        },
+        "emmet.includeLanguages": {
+          "erb": "html"
+        }
+      }
+    }
+  },
+
+  "forwardPorts": [6379],
+  "portsAttributes": {
+    "6379": {
+      "label": "Redis",
+      "onAutoForward": "ignore"
+    }
+  },
+
+  "postCreateCommand": "git config --global --add safe.directory /workspace && bundle install",
+
+  "remoteUser": "vscode"
+}

@@ -12,10 +12,13 @@ Gem::Specification.new do |gem|
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = 'sidekiq-status'
   gem.require_paths = ['lib']
+  gem.required_ruby_version = '>= 3.2'
   gem.version       = Sidekiq::Status::VERSION
 
   gem.add_dependency                  'sidekiq', '>= 6.0', '< 8'
   gem.add_dependency                  'chronic_duration'
+  gem.add_dependency                  'logger'
+  gem.add_dependency                  'base64'
   gem.add_development_dependency      'appraisal'
   gem.add_development_dependency      'colorize'
   gem.add_development_dependency      'rack-test'
