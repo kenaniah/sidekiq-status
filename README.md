@@ -4,7 +4,7 @@
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
-Requires Ruby 2.6+ and Sidekiq 6.0+ or newer.
+Supports Ruby 3.2+ and Sidekiq 6.0+ or newer.
 
 ## Installation
 
@@ -19,6 +19,10 @@ Or install it yourself as:
 ```bash
 gem install sidekiq-status
 ```
+
+### Migrating to Version 4.x from 3.x (Note... 4.x isn't released yet)
+
+Version 4.0.0 was published in order to add support for Ruby 3.4.x and Sidekiq 8.x and to remove support for Ruby versions of both that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x). **You should be able to upgrade cleanly from version 3.x to 4.x provided you are running Sidekiq 7.x or newer.**
 
 ### Migrating to Version 3.x from 2.x
 
