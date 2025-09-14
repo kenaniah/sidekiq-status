@@ -4,7 +4,7 @@ This devcontainer provides a complete development environment for the sidekiq-st
 
 ## What's Included
 
-- **Ruby 3.3.5**: The same Ruby version used in the project's Dockerfile
+- **Ruby 3.4**: The same Ruby version used in the project's Dockerfile
 - **Redis 7.4.0**: Required for Sidekiq job processing and testing
 - **VS Code Extensions**:
   - Ruby LSP for language support
