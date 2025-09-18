@@ -1,11 +1,6 @@
 require "rspec"
 require 'colorize'
 require 'sidekiq'
-
-# Celluloid should only be manually required before Sidekiq versions 4.+
-require 'sidekiq/version'
-require 'celluloid' if Gem::Version.new(Sidekiq::VERSION) < Gem::Version.new('4.0')
-
 require 'sidekiq/processor'
 require 'sidekiq/manager'
 require 'sidekiq-status'
