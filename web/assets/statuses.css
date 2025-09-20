@@ -81,3 +81,44 @@
   padding: 8px;
   border-radius: 3px;
 }
+
+/* Dark mode support */
+@media screen and (prefers-color-scheme: dark) {
+  .progress {
+    background-color: #2c3e50;
+  }
+
+  .progress-percentage {
+    color: #ecf0f1;
+    text-shadow: 0 0 5px #000;
+  }
+
+  .bar {
+    background-color: #3498db;
+    color: #ecf0f1;
+  }
+
+  .message {
+    color: #ecf0f1;
+    text-shadow: 0 0 5px #000;
+  }
+
+  .status-table th {
+    background-color: #34495e;
+    color: #ecf0f1;
+  }
+
+  .status-table td {
+    background-color: #2c3e50;
+    color: #ecf0f1;
+  }
+
+  .status-table .multiline {
+    background-color: #34495e;
+    color: #ecf0f1;
+  }
+
+  .btn-warning {
+    background-image: linear-gradient(#e67e22, #d35400);
+  }
+}
