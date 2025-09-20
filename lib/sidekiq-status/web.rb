@@ -138,10 +138,10 @@ end
 Sidekiq::Web.tabs["Statuses"] = "statuses"
 
 # Register custom JavaScript and CSS assets
-ASSETS_PATH = File.expand_path('../../../web/assets', __FILE__)
+ASSETS_PATH = File.expand_path('../../../web', __FILE__)
 
 Sidekiq::Web.use Rack::Static,
-  urls: ['/javascripts'],
+  urls: ['/assets'],
   root: ASSETS_PATH,
   cascade: true,
   header_rules: [[:all, { 'cache-control' => 'private, max-age=86400' }]]

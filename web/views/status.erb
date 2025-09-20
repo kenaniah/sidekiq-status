@@ -5,46 +5,7 @@
     Time.at(timestamp.to_i).utc.iso8601
   end
 %>
-<style>
-  .progress {
-    background-color: #C8E1ED;
-  }
-  .progress-percentage {
-    margin: 5px;
-    padding-left: 4px;
-    color: #333;
-    text-align: left;
-    text-shadow: 0 0 5px white;
-    font-weight: bold;
-    font-size: 14px;
-  }
-  .status-table {
-    margin-top: 20px;
-  }
-  .status-table th {
-    background-color: #f5f5f5;
-    font-weight: bold;
-    width: 25%;
-    padding: 12px;
-    border: 1px solid #ddd;
-  }
-  .status-table td {
-    padding: 12px;
-    border: 1px solid #ddd;
-    vertical-align: top;
-  }
-  .status-table .timestamp {
-    font-family: monospace;
-    font-size: 13px;
-  }
-  .status-table .multiline {
-    white-space: pre-wrap;
-    font-family: monospace;
-    background-color: #f8f8f8;
-    padding: 8px;
-    border-radius: 3px;
-  }
-</style>
+<link rel="stylesheet" href="<%= root_path %>assets/statuses.css" />
 
 <h3>
   Job Status: <%= h @status["jid"] %>
