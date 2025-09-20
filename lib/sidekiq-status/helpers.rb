@@ -1,7 +1,7 @@
 module Sidekiq::Status
   module Web
     module Helpers
-      COMMON_STATUS_HASH_KEYS = %w(update_time jid status worker args label pct_complete total at message working_at elapsed eta)
+      COMMON_STATUS_HASH_KEYS = %w(enqueued_at started_at updated_at ended_at jid status worker args label pct_complete total at message elapsed eta)
 
         def csrf_tag
           "<input type='hidden' name='authenticity_token' value='#{env[:csrf_token]}'/>"
@@ -36,10 +36,10 @@ module Sidekiq::Status
 
         def elapsed(status)
           case status['status']
-          when 'complete'
-            Sidekiq::Status.update_time(status['jid']) - Sidekiq::Status.working_at(status['jid'])
+          when 'complete', 'failed', 'stopped', 'interrupted'
+            Sidekiq::Status.end_time(status['jid'])&.- Sidekiq::Status.started_at(status['jid'])
           when 'working', 'retrying'
-            Time.now.to_i - Sidekiq::Status.working_at(status['jid'])
+            Time.now.to_i - Sidekiq::Status.started_at(status['jid'])
           end
         end
 
@@ -61,7 +61,7 @@ module Sidekiq::Status
         end
 
         def has_sort_by?(value)
-          ["worker", "status", "update_time", "pct_complete", "message", "args"].include?(value)
+          ["worker", "status", "updated_at", "pct_complete", "message", "args"].include?(value)
         end
 
         def retry_job_action

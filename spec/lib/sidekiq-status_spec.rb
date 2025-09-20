@@ -72,10 +72,13 @@ describe Sidekiq::Status do
           expect(LongJob.perform_async(0.5)).to eq(job_id)
         }).to eq([job_id]*2)
         expect(hash = Sidekiq::Status.get_all(job_id)).to include 'status' => 'working'
-        expect(hash).to include 'update_time'
+        expect(hash).to include 'started_at'
+        expect(hash).to include 'updated_at'
       end
       expect(hash = Sidekiq::Status.get_all(job_id)).to include 'status' => 'complete'
-      expect(hash).to include 'update_time'
+      expect(hash).to include 'started_at'
+      expect(hash).to include 'updated_at'
+      expect(hash).to include 'ended_at'
     end
   end
 

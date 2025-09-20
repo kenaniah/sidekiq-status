@@ -49,7 +49,7 @@ module Sidekiq::Status
           @statuses << status
         end
 
-        sort_by = has_sort_by?(params[:sort_by]) ? params[:sort_by] : "update_time"
+        sort_by = has_sort_by?(params[:sort_by]) ? params[:sort_by] : "updated_at"
         sort_dir = "asc"
 
         if params[:sort_dir] == "asc"
@@ -74,7 +74,7 @@ module Sidekiq::Status
           {id: "worker", name: "Worker / JID", class: nil, url: nil},
           {id: "args", name: "Arguments", class: nil, url: nil},
           {id: "status", name: "Status", class: nil, url: nil},
-          {id: "update_time", name: "Last Updated", class: nil, url: nil},
+          {id: "updated_at", name: "Last Updated", class: nil, url: nil},
           {id: "pct_complete", name: "Progress", class: nil, url: nil},
           {id: "elapsed", name: "Time Elapsed", class: nil, url: nil},
           {id: "eta", name: "ETA", class: nil, url: nil},
