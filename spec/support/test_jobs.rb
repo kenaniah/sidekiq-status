@@ -34,8 +34,8 @@ end
 
 class LongProgressJob < StubJob
   def perform(*args)
-    10.times do
-      at 10
+    10.times do |i|
+      at (i + 1) * 10
       sleep (args[0] || 0.25) / 10
     end
   end

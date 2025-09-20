@@ -21,6 +21,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency                  'base64'
   gem.add_development_dependency      'appraisal'
   gem.add_development_dependency      'colorize'
+  gem.add_development_dependency      'irb'
   gem.add_development_dependency      'rack-test'
   gem.add_development_dependency      'rake'
   gem.add_development_dependency      'rspec'

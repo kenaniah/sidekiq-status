@@ -123,3 +123,41 @@ task :server do
     puts "\nServer stopped."
   end
 end
+
+desc "Starts an IRB session with Sidekiq, Sidekiq::Status, and the testing jobs loaded"
+task :irb do
+  require 'irb'
+  require 'sidekiq-status'
+  require_relative 'spec/support/test_jobs'
+
+  Sidekiq.configure_server do |config|
+    Sidekiq::Status.configure_server_middleware config
+  end
+
+  # Configure Sidekiq if needed
+  Sidekiq.configure_client do |config|
+    Sidekiq::Status.configure_client_middleware config
+    config.redis = { url: ENV['REDIS_URL'] || 'redis://localhost:6379' }
+  end
+
+  puts "="*60
+  puts "IRB Session with Sidekiq Status"
+  puts "To launch a sidekiq worker, run:"
+  puts "  bundle exec sidekiq -r ./spec/environment.rb"
+  puts ""
+  puts "="*60
+  puts "Available job classes:"
+  puts "  StubJob, LongJob, DataJob, ProgressJob,"
+  puts "  FailingJob, ExpiryJob, etc."
+  puts ""
+  puts "Example usage:"
+  puts "  job_id = StubJob.perform_async"
+  puts "  job_id = LongJob.perform_async(0.5)"
+  puts "  Sidekiq::Status.status(job_id)"
+  puts "  Sidekiq::Status.get_all"
+  puts "="*60
+  puts ""
+
+  ARGV.clear # Clear ARGV to prevent IRB from trying to parse them
+  IRB.start
+end
