@@ -68,7 +68,7 @@ module Sidekiq::Status
     end
 
     def working_at(job_id)
-      (get(job_id, :working_at) || Time.now).to_i
+      (get(job_id, :working_at) || get(job_id, :update_time)).to_i
     end
 
     def update_time(job_id)
