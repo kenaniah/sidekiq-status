@@ -37,7 +37,7 @@ module Sidekiq::Status
         def elapsed(status)
           case status['status']
           when 'complete', 'failed', 'stopped', 'interrupted'
-            Sidekiq::Status.end_time(status['jid'])&.- Sidekiq::Status.started_at(status['jid'])
+            Sidekiq::Status.ended_at(status['jid'])&.- Sidekiq::Status.started_at(status['jid'])
           when 'working', 'retrying'
             Time.now.to_i - Sidekiq::Status.started_at(status['jid'])
           end

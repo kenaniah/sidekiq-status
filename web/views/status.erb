@@ -73,8 +73,8 @@
       </div>
       <div class="col-sm-10">
         <p>
-          <% if @status["elapsed"] %>
-            <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) %>
+          <% unless @status["elapsed"].nil? %>
+            <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) || '0 secs' %>
           <% end %>
         </p>
       </div>

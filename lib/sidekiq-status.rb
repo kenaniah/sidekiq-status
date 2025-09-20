@@ -79,7 +79,7 @@ module Sidekiq::Status
       get(job_id, :updated_at)&.to_i
     end
 
-    def end_time(job_id)
+    def ended_at(job_id)
       get(job_id, :ended_at)&.to_i
     end
 

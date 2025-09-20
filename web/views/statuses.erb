@@ -116,8 +116,8 @@
         </div>
       </td>
       <td style='text-align: center; white-space: nowrap;'>
-        <% if container["elapsed"] %>
-          <%= ChronicDuration.output(container["elapsed"].to_i, :weeks => true, :units => 2) %>
+        <% unless container["elapsed"].nil? %>
+          <%= ChronicDuration.output(container["elapsed"].to_i, :weeks => true, :units => 2) || '0 secs' %>
         <% end %>
       </td>
       <td style='text-align: center; white-space: nowrap;'>
