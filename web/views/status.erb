@@ -63,7 +63,7 @@
 
 <div class="panel panel-default" style="background-color: inherit">
   <div class="panel-body">
-    <h4><%= h @status["worker"] %></h4>
+    <h4><%= h @status["worker"] %> Details</h4>
 
     <table class="table table-bordered status-table">
       <tbody>
@@ -159,23 +159,25 @@
           <th>Ended At</th>
           <td class="timestamp"><%= format_iso_timestamp(@status["ended_at"]) %></td>
         </tr>
-        <% if @status["custom"] && @status["custom"].any? %>
-          <tr><td colspan="2"><h4>Custom Job Data</h4></td></tr>
-          <% @status["custom"].each do |key, val| %>
-            <tr>
-              <th><%= h key %></th>
-              <td>
-                <% if val && val.to_s.include?("\n") %>
-                  <div class="multiline"><%= h val %></div>
-                <% else %>
-                  <%= h(val) || "<i>none</i>" %>
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        <% end %>
       </tbody>
     </table>
+    <% if @status["custom"] && @status["custom"].any? %>
+      <h4>Custom Job Data</h4>
+      <table class="table table-bordered status-table">
+        <% @status["custom"].each do |key, val| %>
+          <tr>
+            <th><%= h key %></th>
+            <td>
+              <% if val && val.to_s.include?("\n") %>
+                <div class="multiline"><%= h val %></div>
+              <% else %>
+                <%= h(val) || "<i>none</i>" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </table>
+    <% end %>
   </div>
 </div>
 
