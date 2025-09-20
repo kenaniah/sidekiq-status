@@ -25,4 +25,6 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency      'rake'
   gem.add_development_dependency      'rspec'
   gem.add_development_dependency      'sinatra'
+  gem.add_development_dependency      'webrick'
+  gem.add_development_dependency      'rack-session'
 end
