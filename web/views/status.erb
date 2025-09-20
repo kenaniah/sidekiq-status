@@ -1,4 +1,10 @@
 <% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
+<%
+  def format_iso_timestamp(timestamp)
+    return "<i>n/a</i>" unless timestamp && !timestamp.empty?
+    Time.at(timestamp.to_i).utc.iso8601
+  end
+%>
 <style>
   .progress {
     background-color: #C8E1ED;
@@ -12,8 +18,34 @@
     font-weight: bold;
     font-size: 14px;
   }
+  .status-table {
+    margin-top: 20px;
+  }
+  .status-table th {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    width: 25%;
+    padding: 12px;
+    border: 1px solid #ddd;
+  }
+  .status-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    vertical-align: top;
+  }
+  .status-table .timestamp {
+    font-family: monospace;
+    font-size: 13px;
+  }
+  .status-table .multiline {
+    white-space: pre-wrap;
+    font-family: monospace;
+    background-color: #f8f8f8;
+    padding: 8px;
+    border-radius: 3px;
+  }
 </style>
-<%= @status.inspect%>
+
 <h3>
   Job Status: <%= h @status["jid"] %>
   <span class='label label-<%= h @status["label"] %>'>
@@ -33,83 +65,117 @@
   <div class="panel-body">
     <h4><%= h @status["worker"] %></h4>
 
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Arguments</strong>
-      </div>
-      <div class="col-sm-10">
-        <p><%= @status["args"].empty? ? "<i>none</i>" : h(@status["args"]) %></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Message</strong>
-      </div>
-      <div class="col-sm-10">
-        <p><%= h(@status["message"]) || "<i>none</i>" %></p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Last Updated</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% secs = Time.now.to_i - @status["updated_at"].to_i %>
-          <% if secs > 0 %>
-            <%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago
-          <% else %>
-            Now
-          <% end %>
-        </p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>Elapsed Time</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% unless @status["elapsed"].nil? %>
-            <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) || '0 secs' %>
-          <% end %>
-        </p>
-      </div>
-    </div>
-
-    <div class="row">
-      <div class="col-sm-2">
-        <strong>ETA</strong>
-      </div>
-      <div class="col-sm-10">
-        <p>
-          <% if @status["eta"] %>
-            <%= ChronicDuration.output(@status["eta"].to_i, :weeks => true, :units => 2) %>
-          <% end %>
-        </p>
-      </div>
-    </div>
-
-    <% if @status["custom"].any? %>
-      <hr>
-      <% @status["custom"].each do |key, val| %>
-        <div class="row">
-          <div class="col-sm-2">
-            <strong><%= key %></strong>
-          </div>
-          <div class="col-sm-10">
-            <% if val && val.include?("\n") %>
-              <pre><%= h val %></pre>
-            <% else  %>
-              <p><%= h(val) || "<i>none</i>" %></p>
+    <table class="table table-bordered status-table">
+      <tbody>
+        <tr>
+          <th>Job ID</th>
+          <td><code><%= h @status["jid"] %></code></td>
+        </tr>
+        <tr>
+          <th>Arguments</th>
+          <td>
+            <% if @status["args"] && !@status["args"].empty? %>
+              <% args_content = h(@status["args"]) %>
+              <% if args_content.include?("\n") %>
+                <div class="multiline"><%= args_content %></div>
+              <% else %>
+                <%= args_content %>
+              <% end %>
+            <% else %>
+              <i>none</i>
             <% end %>
-          </div>
-        </div>
-      <% end %>
-    <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>Status</th>
+          <td><span class='label label-<%= h @status["label"] %>'><%= h @status["status"] %></span></td>
+        </tr>
+        <tr>
+          <th>Elapsed Time</th>
+          <td>
+            <% unless @status["elapsed"].nil? %>
+              <%= ChronicDuration.output(@status["elapsed"].to_i, :weeks => true, :units => 2) || '0 secs' %>
+            <% else %>
+              <i>n/a</i>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>Progress</th>
+          <td>
+            <%= @status["pct_complete"].to_i %>%
+            <% if @status["at"] && @status["total"] %>
+              (<%= @status["at"] %> of <%= @status["total"] %>)
+            <% end %>
+          </td>
+        </tr>
+        <% if @status["status"] == "working" %>
+        <tr>
+          <th>ETA</th>
+          <td>
+            <% if @status["eta"] %>
+              <%= ChronicDuration.output(@status["eta"].to_i, :weeks => true, :units => 2) %>
+            <% else %>
+              <i>n/a</i>
+            <% end %>
+          </td>
+        </tr>
+        <% end %>
+        <tr>
+          <th>Message</th>
+          <td>
+            <% if @status["message"] && !@status["message"].empty? %>
+              <%= h(@status["message"]) %>
+            <% else %>
+              <i>none</i>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>Enqueued At</th>
+          <td class="timestamp"><%= format_iso_timestamp(@status["enqueued_at"]) %></td>
+        </tr>
+        <tr>
+          <th>Started At</th>
+          <td class="timestamp"><%= format_iso_timestamp(@status["started_at"]) %></td>
+        </tr>
+        <tr>
+          <th>Last Updated</th>
+          <td class="timestamp">
+            <%= format_iso_timestamp(@status["updated_at"]) %>
+            <% if @status["updated_at"] %>
+              <br><small class="text-muted">
+                <% secs = Time.now.to_i - @status["updated_at"].to_i %>
+                <% if secs > 0 %>
+                  (<%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago)
+                <% else %>
+                  (now)
+                <% end %>
+              </small>
+            <% end %>
+          </td>
+        </tr>
+        <tr>
+          <th>Ended At</th>
+          <td class="timestamp"><%= format_iso_timestamp(@status["ended_at"]) %></td>
+        </tr>
+        <% if @status["custom"] && @status["custom"].any? %>
+          <tr><td colspan="2"><h4>Custom Job Data</h4></td></tr>
+          <% @status["custom"].each do |key, val| %>
+            <tr>
+              <th><%= h key %></th>
+              <td>
+                <% if val && val.to_s.include?("\n") %>
+                  <div class="multiline"><%= h val %></div>
+                <% else %>
+                  <%= h(val) || "<i>none</i>" %>
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
   </div>
 </div>
 
