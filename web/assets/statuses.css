@@ -55,9 +55,13 @@
 .nav-container .per-page SELECT {
   margin: 0 0 0 5px;
 }
-.status-table {
-  margin-top: 20px;
+
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
+
 .status-table th {
   background-color: #f5f5f5;
   font-weight: bold;
