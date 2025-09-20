@@ -208,9 +208,15 @@ Sidekiq::Web.register(Sidekiq::Status::Web)
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
   Sidekiq::WebHelpers::SAFE_QPARAMS.push(key)
 end
-if Sidekiq::Web.tabs.is_a?(Array)
-  # For sidekiq < 2.5
-  Sidekiq::Web.tabs << "statuses"
-else
-  Sidekiq::Web.tabs["Statuses"] = "statuses"
-end
+Sidekiq::Web.tabs["Statuses"] = "statuses"
+
+# Register custom JavaScript and CSS assets
+ASSETS_PATH = File.expand_path('../../../web/assets', __FILE__)
+
+puts ASSETS_PATH
+
+Sidekiq::Web.use Rack::Static,
+  urls: ['/javascripts'],
+  root: ASSETS_PATH,
+  cascade: true,
+  header_rules: [[:all, { 'cache-control' => 'private, max-age=86400' }]]
