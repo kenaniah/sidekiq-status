@@ -1,10 +1,5 @@
-appraise "sidekiq-6.1" do
-  gem "sidekiq", "~> 6.1"
-end
-
-appraise "sidekiq-6.x" do
-  gem "sidekiq", "~> 6"
-  gem 'rack', '~> 2'
+appraise "sidekiq-7.0" do
+  gem "sidekiq", "~> 7.0.0"
 end
 
 appraise "sidekiq-7.x" do

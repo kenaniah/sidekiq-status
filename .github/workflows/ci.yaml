@@ -33,8 +33,7 @@ jobs:
           - '3.4'
           - 'head'
         gemfile:
-          - 'gemfiles/sidekiq_6.1.gemfile'
-          - 'gemfiles/sidekiq_6.x.gemfile'
+          - 'gemfiles/sidekiq_7.0.gemfile'
           - 'gemfiles/sidekiq_7.x.gemfile'
     continue-on-error: ${{ endsWith(matrix.ruby, 'head') }}
 
