@@ -4,8 +4,9 @@ require_relative 'helpers'
 module Sidekiq::Status
   # Hook into *Sidekiq::Web* Sinatra app which adds a new "/statuses" page
   module Web
-    # Location of Sidekiq::Status::Web view templates
-    VIEW_PATH = File.expand_path('../../../web/views', __FILE__)
+    # Location of Sidekiq::Status::Web static assets and templates
+    ROOT = File.expand_path("../../web", File.dirname(__FILE__))
+    VIEW_PATH = File.expand_path("views", ROOT)
 
     DEFAULT_PER_PAGE_OPTS = [25, 50, 100].freeze
     DEFAULT_PER_PAGE = 25
@@ -25,11 +26,7 @@ module Sidekiq::Status
       end
     end
 
-    # @param [Sidekiq::Web] app
     def self.registered(app)
-
-      # Allow method overrides to support RESTful deletes
-      app.set :method_override, true
 
       app.helpers Helpers
 
@@ -49,25 +46,25 @@ module Sidekiq::Status
           @statuses << status
         end
 
-        sort_by = has_sort_by?(params[:sort_by]) ? params[:sort_by] : "updated_at"
+        sort_by = has_sort_by?(params["sort_by"]) ? params["sort_by"] : "updated_at"
         sort_dir = "asc"
 
-        if params[:sort_dir] == "asc"
+        if params["sort_dir"] == "asc"
           @statuses = @statuses.sort { |x,y| (x[sort_by] <=> y[sort_by]) || -1 }
         else
           sort_dir = "desc"
           @statuses = @statuses.sort { |y,x| (x[sort_by] <=> y[sort_by]) || 1 }
         end
 
-        if params[:status] && params[:status] != "all"
-          @statuses = @statuses.select {|job_status| job_status["status"] == params[:status] }
+        if params["status"] && params["status"] != "all"
+          @statuses = @statuses.select {|job_status| job_status["status"] == params["status"] }
         end
 
         # Sidekiq pagination
         @total_size = @statuses.count
-        @count = params[:per_page] ? params[:per_page].to_i : Sidekiq::Status::Web.default_per_page
-        @count = @total_size if params[:per_page] == 'all'
-        @current_page = params[:page].to_i < 1 ? 1 : params[:page].to_i
+        @count = params["per_page"] ? params["per_page"].to_i : Sidekiq::Status::Web.default_per_page
+        @count = @total_size if params["per_page"] == 'all'
+        @current_page = params["page"].to_i < 1 ? 1 : params["page"].to_i
         @statuses = @statuses.slice((@current_page - 1) * @count, @count)
 
         @headers = [
@@ -101,7 +98,7 @@ module Sidekiq::Status
 
       # Handles POST requests with method override for statuses
       app.post '/statuses' do
-        case params[:_method]
+        case params["_method"]
         when 'put'
           # Retries a failed job from the status list
           retry_job_action
@@ -127,15 +124,32 @@ module Sidekiq::Status
 end
 
 unless defined?(Sidekiq::Web)
-  require 'delegate' # Needed for sidekiq 5.x
   require 'sidekiq/web'
 end
 
-Sidekiq::Web.register(Sidekiq::Status::Web)
+Sidekiq::Web.configure do |config|
+  if Sidekiq.major_version >= 8
+    config.register_extension(
+      Sidekiq::Status::Web,
+      name: 'statuses',
+      tab: ['Statuses'],
+      index: ['statuses'],
+      root_dir: Sidekiq::Status::Web::ROOT,
+      asset_paths: ['javascripts', 'stylesheets']
+    )
+  else
+    config.register(
+      Sidekiq::Status::Web,
+      name: 'statuses',
+      tab: ['Statuses'],
+      index: 'statuses'
+    )
+  end
+end
+
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
   Sidekiq::WebHelpers::SAFE_QPARAMS.push(key)
 end
-Sidekiq::Web.tabs["Statuses"] = "statuses"
 
 # Register custom JavaScript and CSS assets
 ASSETS_PATH = File.expand_path('../../../web', __FILE__)

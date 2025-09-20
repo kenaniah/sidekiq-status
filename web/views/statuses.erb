@@ -9,7 +9,7 @@
       Filter Status:
       <select class="form-control">
         <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
-          <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (params[:status]) %>><%= status %></option>
+          <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (params["status"]) %>><%= status %></option>
         <% end %>
       </select>
     </div>
@@ -18,7 +18,7 @@
       Per page:
       <select class="form-control">
         <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
-        <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (params[:per_page] || @count) %>><%= num %></option>
+        <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (params["per_page"] || @count) %>><%= num %></option>
         <% end %>
       </select>
     </div>

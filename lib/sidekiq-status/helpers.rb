@@ -8,7 +8,7 @@ module Sidekiq::Status
         end
 
         def poll_path
-          "?#{request.query_string}" if params[:poll]
+          "?#{request.query_string}" if params["poll"]
         end
 
         def sidekiq_status_template(name)
@@ -65,14 +65,14 @@ module Sidekiq::Status
         end
 
         def retry_job_action
-          job = Sidekiq::RetrySet.new.find_job(params[:jid])
-          job ||= Sidekiq::DeadSet.new.find_job(params[:jid])
+          job = Sidekiq::RetrySet.new.find_job(params["jid"])
+          job ||= Sidekiq::DeadSet.new.find_job(params["jid"])
           job.retry if job
           throw :halt, [302, { "Location" => request.referer }, []]
         end
 
         def delete_job_action
-          Sidekiq::Status.delete(params[:jid])
+          Sidekiq::Status.delete(params["jid"])
           throw :halt, [302, { "Location" => request.referer }, []]
         end
     end
