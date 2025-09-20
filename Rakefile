@@ -142,6 +142,7 @@ task :irb do
 
   puts "="*60
   puts "IRB Session with Sidekiq Status"
+  puts ""
   puts "To launch a sidekiq worker, run:"
   puts "  bundle exec sidekiq -r ./spec/environment.rb"
   puts ""
