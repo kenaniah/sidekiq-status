@@ -15,7 +15,7 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 3.2'
   gem.version       = Sidekiq::Status::VERSION
 
-  gem.add_dependency                  'sidekiq', '>= 6.0', '< 8'
+  gem.add_dependency                  'sidekiq', '>= 7', '< 9'
   gem.add_dependency                  'chronic_duration'
   gem.add_dependency                  'logger'
   gem.add_dependency                  'base64'
