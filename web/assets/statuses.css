@@ -4,16 +4,16 @@
   height: 100%;
 }
 .progress-bar {
+  display: flex;
+  align-items: center;
   width: calc(attr(aria-valuenow type(<number>)) * 1%);
 }
 .progress-percentage {
-  margin: 5px;
-  padding-left: 4px;
+  padding-left: 6px;
   color: #333;
   text-align: left;
   text-shadow: 0 0 5px white;
   font-weight: bold;
-  font-size: 14px;
 }
 .bar {
   background-color: #2897cb;
