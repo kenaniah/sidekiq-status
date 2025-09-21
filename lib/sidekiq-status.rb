@@ -87,7 +87,10 @@ module Sidekiq::Status
       at = at(job_id)
       return nil if at.zero?
 
-      (Time.now.to_i - updated_at(job_id)).to_f / at * (total(job_id) - at)
+      start_time = started_at(job_id) || enqueued_at(job_id) || updated_at(job_id)
+      elapsed = Time.now.to_i - start_time if start_time
+      return nil unless elapsed
+      elapsed.to_f / at * (total(job_id) - at)
     end
 
     def message(job_id)
