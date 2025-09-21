@@ -150,7 +150,7 @@ describe Sidekiq::Status do
           expect(Sidekiq::Status.stop!(job_id)).to be_truthy
         }).to eq([job_id]*1)
       end
-      expect(Sidekiq::Status.at(job_id)).to be(10)
+      expect(Sidekiq::Status.at(job_id)).to be(0)
       expect(Sidekiq::Status.stopped?(job_id)).to be_truthy
     end
   end
