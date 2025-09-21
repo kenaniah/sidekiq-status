@@ -142,7 +142,7 @@ if Sidekiq.major_version >= 8
   end
 elsif Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.3.0')
   Sidekiq::Web.configure do |config|
-    config.register_extension(
+    config.register(
       Sidekiq::Status::Web,
       name: 'statuses',
       tab: ['Statuses'],
