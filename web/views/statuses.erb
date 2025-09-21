@@ -56,7 +56,7 @@
       </td>
       <td>
         <div class="progress" style="margin-bottom: 0">
-          <div class="progress-bar" role="progressbar" aria-valuenow="<%= container["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100">
+          <div class="progress-bar" role="progressbar" aria-valuenow="<%= container["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= container["pct_complete"].to_i %>%">
             <div class="progress-percentage">
               <%= container["pct_complete"].to_i %>%
             </div>
