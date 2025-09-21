@@ -46,25 +46,25 @@ module Sidekiq::Status
           @statuses << status
         end
 
-        sort_by = has_sort_by?(params["sort_by"]) ? params["sort_by"] : "updated_at"
+        sort_by = has_sort_by?(safe_url_params("sort_by")) ? safe_url_params("sort_by") : "updated_at"
         sort_dir = "asc"
 
-        if params["sort_dir"] == "asc"
+        if safe_url_params("sort_dir") == "asc"
           @statuses = @statuses.sort { |x,y| (x[sort_by] <=> y[sort_by]) || -1 }
         else
           sort_dir = "desc"
           @statuses = @statuses.sort { |y,x| (x[sort_by] <=> y[sort_by]) || 1 }
         end
 
-        if params["status"] && params["status"] != "all"
-          @statuses = @statuses.select {|job_status| job_status["status"] == params["status"] }
+        if safe_url_params("status") && safe_url_params("status") != "all"
+          @statuses = @statuses.select {|job_status| job_status["status"] == safe_url_params("status") }
         end
 
         # Sidekiq pagination
         @total_size = @statuses.count
-        @count = params["per_page"] ? params["per_page"].to_i : Sidekiq::Status::Web.default_per_page
-        @count = @total_size if params["per_page"] == 'all'
-        @current_page = params["page"].to_i < 1 ? 1 : params["page"].to_i
+        @count = safe_url_params("per_page") ? safe_url_params("per_page").to_i : Sidekiq::Status::Web.default_per_page
+        @count = @total_size if safe_url_params("per_page") == 'all'
+        @current_page = safe_url_params("page").to_i < 1 ? 1 : safe_url_params("page").to_i
         @statuses = @statuses.slice((@current_page - 1) * @count, @count)
 
         @headers = [
@@ -77,8 +77,10 @@ module Sidekiq::Status
           {id: "eta", name: "ETA", class: nil, url: nil},
         ]
 
+        args = request.params
+
         @headers.each do |h|
-          h[:url] = "statuses?" + params.merge("sort_by" => h[:id], "sort_dir" => (sort_by == h[:id] && sort_dir == "asc") ? "desc" : "asc").map{|k, v| "#{k}=#{CGI.escape v.to_s}"}.join("&")
+          h[:url] = "statuses?" + args.merge("sort_by" => h[:id], "sort_dir" => (sort_by == h[:id] && sort_dir == "asc") ? "desc" : "asc").map{|k, v| "#{k}=#{CGI.escape v.to_s}"}.join("&")
           h[:class] = "sorted_#{sort_dir}" if sort_by == h[:id]
         end
 
@@ -86,7 +88,7 @@ module Sidekiq::Status
       end
 
       app.get '/statuses/:jid' do
-        job = Sidekiq::Status::get_all params['jid']
+        job = Sidekiq::Status::get_all safe_route_params(:jid)
 
         if job.empty?
           throw :halt, [404, {"Content-Type" => "text/html"}, [erb(sidekiq_status_template(:status_not_found))]]
@@ -98,7 +100,7 @@ module Sidekiq::Status
 
       # Handles POST requests with method override for statuses
       app.post '/statuses' do
-        case params["_method"]
+        case safe_url_params("_method")
         when 'put'
           # Retries a failed job from the status list
           retry_job_action

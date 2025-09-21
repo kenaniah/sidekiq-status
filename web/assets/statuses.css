@@ -1,5 +1,12 @@
 .progress {
   background-color: #C8E1ED;
+  border-radius: 8px;
+  height: 100%;
+  display: block;
+}
+.progress-bar {
+  display: block;
+  background-color: #2897cb;
 }
 .progress-percentage {
   margin: 5px;
@@ -21,9 +28,6 @@
   color: #333;
 }
 .actions {
-  text-align: center;
-}
-.header {
   text-align: center;
 }
 .btn-warning {
@@ -73,6 +77,9 @@
   background-color: #f8f8f8;
   padding: 8px;
   border-radius: 3px;
+}
+.label {
+  display: inline-block;
 }
 
 /* Dark mode support */
