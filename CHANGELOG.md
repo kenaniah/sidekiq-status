@@ -1,3 +1,15 @@
+**Version 4.0.0**
+ - Adds support for Ruby 3.3 and 3.4
+ - Adds support for Sidekiq 8.x
+ - Drops support for Sidekiq 6.x
+ - Drops support for Ruby versions that are now end-of-life (Ruby 2.7.x - Ruby 3.1.x)
+ - **BREAKING CHANGE**: Introduces breaking changes in job timestamp storage in Redis
+ - **BREAKING CHANGE**: Renames `#working_at` to `#updated_at`
+ - Major UI improvements with enhanced progress bars and better web interface styling
+ - Adds fallback routes for retry and delete buttons
+ - Adds a devcontainer to simplify development
+ - Improved elapsed time and ETA calculations
+
 **Version 3.0.3**
  - Fixes a Sidekiq warning about the deprecated `hmset` redis command (https://github.com/kenaniah/sidekiq-status/pull/37)
 

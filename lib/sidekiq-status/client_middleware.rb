@@ -37,7 +37,8 @@ module Sidekiq::Status
           jid: msg['jid'],
           status: :queued,
           worker: JOB_CLASS.new(msg, queue).display_class,
-          args: display_args(msg, queue)
+          args: display_args(msg, queue),
+          enqueued_at: Time.now.to_i
         }
         store_for_id msg['jid'], initial_metadata, job_class.new.expiration || @expiration, redis_pool
       end

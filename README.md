@@ -4,7 +4,7 @@
 
 Sidekiq-status is an extension to [Sidekiq](https://github.com/mperham/sidekiq) that tracks information about your Sidekiq and provides a UI to that purpose. It was inspired by [resque-status](https://github.com/quirkey/resque-status).
 
-Supports Ruby 3.2+ and Sidekiq 6.0+ or newer.
+Supports Ruby 3.2+ and Sidekiq 7.0+ or newer.
 
 ## Installation
 
@@ -22,9 +22,9 @@ gem install sidekiq-status
 
 ### Migrating to Version 4.x from 3.x
 
-Version 4.0.0 adds support for Ruby 3.4.x and Sidekiq 8.x, but drops support for Sidekiq 6.x and Ruby versions that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x).
+Version 4.0.0 adds support for Ruby 3.3, 3.4 and Sidekiq 8.x, but drops support for Sidekiq 6.x and Ruby versions that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x).
 
-Version 4.0.0 introduces a breaking change in the way job timestamps are stored in Redis, and also renames `#working_at` to `#updated_at`.
+Version 4.0.0 introduces a breaking change in the way job timestamps are stored in Redis, and also renames `#working_at` to `#updated_at`. Additionally, this version includes major UI improvements with enhanced progress bars and better web interface styling.
 
 ### Migrating to Version 3.x from 2.x
 
