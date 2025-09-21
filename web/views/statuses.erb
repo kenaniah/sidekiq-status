@@ -1,12 +1,12 @@
 <% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
 <link rel="stylesheet" href="<%= root_path %>assets/statuses.css" />
 <script type="text/javascript" src="<%= root_path %>assets/statuses.js"></script>
-<div style="display: flex; justify-content: space-between;">
+<div class="index-header">
   <h3 class="wi">Recent job statuses</h3>
   <div class="nav-container">
     <%= erb :_paging, locals: { url: "#{root_path}statuses" } %>
     <div class="filter-status">
-      Filter Status:
+      Filter Status:&nbsp;
       <select class="form-control">
         <% (['all', 'complete', 'failed', 'interrupted', 'queued', 'retrying', 'stopped', 'working']).each do |status| %>
           <option data-url="?<%= qparams(status: status)%>" value="<%= status %>" <%= 'selected="selected"' if status == (safe_url_params("status")) %>><%= status %></option>
@@ -15,7 +15,7 @@
     </div>
 
     <div class="per-page">
-      Per page:
+      Per page:&nbsp;
       <select class="form-control">
         <% (Sidekiq::Status::Web.per_page_opts + ['all']).each do |num| %>
         <option data-url="?<%= qparams(page: 1, per_page: num)%>" value="<%= num %>" <%= 'selected="selected"' if num.to_s == (safe_url_params("per_page") || @count) %>><%= num %></option>

@@ -31,6 +31,10 @@
 .btn-warning {
   background-image: linear-gradient(#f0ad4e, #eea236)
 }
+.index-header {
+  display: flex;
+  justify-content: space-between;
+}
 .nav-container {
   display: flex;
   line-height: 45px;
@@ -78,6 +82,9 @@
 }
 .label {
   display: inline-block;
+}
+.label-primary {
+  background-color: #337ab7;
 }
 
 /* Dark mode support */
