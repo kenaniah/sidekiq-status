@@ -24,7 +24,7 @@ gem install sidekiq-status
 
 Version 4.0.0 adds support for Ruby 3.4.x and Sidekiq 8.x, but drops support for Sidekiq 6.x and Ruby versions that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x).
 
-Version 4.0.0 introduces a breaking change in the way job timestamps are stored in Redis, and also renames `#worked_at` to `#updated_at`.
+Version 4.0.0 introduces a breaking change in the way job timestamps are stored in Redis, and also renames `#working_at` to `#updated_at`.
 
 ### Migrating to Version 3.x from 2.x
 
