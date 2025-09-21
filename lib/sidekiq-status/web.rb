@@ -129,24 +129,25 @@ unless defined?(Sidekiq::Web)
   require 'sidekiq/web'
 end
 
-Sidekiq::Web.configure do |config|
-  if Sidekiq.major_version >= 8
-    config.register_extension(
-      Sidekiq::Status::Web,
-      name: 'statuses',
-      tab: ['Statuses'],
-      index: ['statuses'],
-      root_dir: Sidekiq::Status::Web::ROOT,
-      asset_paths: ['javascripts', 'stylesheets']
-    )
-  else
-    config.register(
-      Sidekiq::Status::Web,
-      name: 'statuses',
-      tab: ['Statuses'],
-      index: 'statuses'
-    )
-  end
+if Sidekiq.major_version >= 8
+  Sidekiq::Web.register_extension(
+    Sidekiq::Status::Web,
+    name: 'statuses',
+    tab: ['Statuses'],
+    index: ['statuses'],
+    root_dir: Sidekiq::Status::Web::ROOT,
+    asset_paths: ['javascripts', 'stylesheets']
+  )
+elsif Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.3.0')
+  Sidekiq::Web.register_extension(
+    Sidekiq::Status::Web,
+    name: 'statuses',
+    tab: ['Statuses'],
+    index: 'statuses'
+  )
+else
+  Sidekiq::Web.register(Sidekiq::Status::Web)
+  Sidekiq::Web.tabs["Statuses"] = "statuses"
 end
 
 ["per_page", "sort_by", "sort_dir", "status"].each do |key|
