@@ -20,9 +20,11 @@ Or install it yourself as:
 gem install sidekiq-status
 ```
 
-### Migrating to Version 4.x from 3.x (Note... 4.x isn't released yet)
+### Migrating to Version 4.x from 3.x
 
-Version 4.0.0 was published in order to add support for Ruby 3.4.x and Sidekiq 8.x and to remove support for Ruby versions of both that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x). **You should be able to upgrade cleanly from version 3.x to 4.x provided you are running Sidekiq 7.x or newer.**
+Version 4.0.0 adds support for Ruby 3.4.x and Sidekiq 8.x, but drops support for Sidekiq 6.x and Ruby versions that are now end-of-life (specifically, Ruby 2.7.x - Ruby 3.1.x).
+
+Version 4.0.0 introduces a breaking change in the way job timestamps are stored in Redis, and also renames `#worked_at` to `#updated_at`.
 
 ### Migrating to Version 3.x from 2.x
 
