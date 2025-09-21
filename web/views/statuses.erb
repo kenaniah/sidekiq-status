@@ -55,15 +55,12 @@
         <% end %>
       </td>
       <td>
-        <div class="progress progress-striped" style="margin-bottom: 0">
-          <div class='message' style='text-align:right; padding-right:0.5em; background-color: transparent; float:right;'>
-            <%= h container["message"] %>
-          </div>
-          <% if container["pct_complete"].to_i > 0 %>
-            <div class="bar message" style="width: <%= h container["pct_complete"] %>%;">
-              <%= h container["pct_complete"] %>%
+        <div class="progress" style="margin-bottom: 0">
+          <div class="progress-bar" role="progressbar" aria-valuenow="<%= container["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100">
+            <div class="progress-percentage">
+              <%= container["pct_complete"].to_i %>%
             </div>
-          <% end %>
+          </div>
         </div>
       </td>
       <td style='text-align: center; white-space: nowrap;'>
