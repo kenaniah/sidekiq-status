@@ -130,7 +130,7 @@ unless defined?(Sidekiq::Web)
 end
 
 if Sidekiq.major_version >= 8
-  Sidekiq::Web.config do |config|
+  Sidekiq::Web.configure do |config|
     config.register_extension(
       Sidekiq::Status::Web,
       name: 'statuses',
@@ -141,7 +141,7 @@ if Sidekiq.major_version >= 8
     )
   end
 elsif Gem::Version.new(Sidekiq::VERSION) >= Gem::Version.new('7.3.0')
-  Sidekiq::Web.config do |config|
+  Sidekiq::Web.configure do |config|
     config.register_extension(
       Sidekiq::Status::Web,
       name: 'statuses',
