@@ -2,11 +2,9 @@
   background-color: #C8E1ED;
   border-radius: 8px;
   height: 100%;
-  display: block;
 }
 .progress-bar {
-  display: block;
-  background-color: #2897cb;
+  width: calc(attr(aria-valuenow type(<number>)) * 1%);
 }
 .progress-percentage {
   margin: 5px;
