@@ -76,7 +76,8 @@ module Sidekiq::Status
     end
 
     def updated_at(job_id)
-      get(job_id, :updated_at)&.to_i
+      # sidekiq-status v3.x and earlier used :update_time
+      get(job_id, :updated_at)&.to_i || get(job_id, :update_time)&.to_i
     end
 
     def ended_at(job_id)
