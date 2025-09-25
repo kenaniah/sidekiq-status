@@ -6,7 +6,7 @@
   end
 %>
 <link rel="stylesheet" href="<%= root_path %>assets/statuses.css" />
-
+<script type="text/javascript" src="<%= root_path %>assets/statuses.js"></script>
 <h3 class="status-header">
   Job Status
   <span class='label label-<%= h @status["label"] %>'>
@@ -14,9 +14,9 @@
   </span>
 </h3>
 
-<div class="progress" style="height: 30px;">
-  <div class="progress-bar" role="progressbar" aria-valuenow="<%= @status["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= @status["pct_complete"].to_i %>%">
-    <div class="progress-percentage" style="font-size: 1.4em;">
+<div class="progress h-30px">
+  <div class="progress-bar" role="progressbar" aria-valuenow="<%= @status["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-percentage fs-lg">
       <%= @status["pct_complete"].to_i %>%
     </div>
   </div>

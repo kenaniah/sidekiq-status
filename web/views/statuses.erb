@@ -43,11 +43,11 @@
       <td>
         <div class='args' title='<%= h container["jid"] %>'><%= h container["args"] %></div>
       </td>
-      <td style='text-align: center;'>
+      <td class='center'>
         <span class='label label-<%= h container["label"] %>'><%= h container["status"] %></span>
       </td>
       <% secs = Time.now.to_i - container["updated_at"].to_i %>
-      <td style='text-align: center; white-space: nowrap;' title="<%= Time.at(container["updated_at"].to_i) %>">
+      <td class='center nowrap' title="<%= Time.at(container["updated_at"].to_i) %>">
         <% if secs > 0 %>
           <%= ChronicDuration.output(secs, :weeks => true, :units => 2) %> ago
         <% else %>
@@ -55,20 +55,20 @@
         <% end %>
       </td>
       <td>
-        <div class="progress" style="margin-bottom: 0">
-          <div class="progress-bar" role="progressbar" aria-valuenow="<%= container["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100" style="width: <%= container["pct_complete"].to_i %>%">
+        <div class="progress" class="mb-0">
+          <div class="progress-bar" role="progressbar" aria-valuenow="<%= container["pct_complete"].to_i %>" aria-valuemin="0" aria-valuemax="100">
             <div class="progress-percentage">
               <%= container["pct_complete"].to_i %>%
             </div>
           </div>
         </div>
       </td>
-      <td style='text-align: center; white-space: nowrap;'>
+      <td class='center nowrap'>
         <% unless container["elapsed"].nil? %>
           <%= ChronicDuration.output(container["elapsed"].to_i, :weeks => true, :units => 2) || '0 secs' %>
         <% end %>
       </td>
-      <td style='text-align: center; white-space: nowrap;'>
+      <td class='center nowrap'>
         <% if container["eta"] %>
           <%= ChronicDuration.output(container["eta"].to_i, :weeks => true, :units => 2) %>
         <% end %>

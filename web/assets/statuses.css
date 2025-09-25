@@ -6,7 +6,6 @@
 .progress-bar {
   display: flex;
   align-items: center;
-  width: calc(attr(aria-valuenow type(<number>)) * 1%);
 }
 .progress-percentage {
   padding-left: 6px;
@@ -85,6 +84,21 @@
 }
 .label-primary {
   background-color: #337ab7;
+}
+.center {
+  text-align: center;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.h-30px {
+  height: 30px;
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.fs-lg {
+  font-size: 1.4em;
 }
 
 /* Dark mode support */
