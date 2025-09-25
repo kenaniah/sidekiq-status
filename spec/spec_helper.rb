@@ -45,7 +45,7 @@ def redis_thread messages_limit, *channels
         end
       end
     end
-    puts "Returing from thread".cyan if ENV['DEBUG']
+    puts "Returning from thread".cyan if ENV['DEBUG']
     messages
   }
 
@@ -78,7 +78,7 @@ def redis_client_thread message_limit, *channels
         end
       end
     end
-    puts "Returing from thread".cyan if ENV['DEBUG']
+    puts "Returning from thread".cyan if ENV['DEBUG']
     messages
   }
   sleep 0.1
@@ -121,7 +121,7 @@ def start_server server_middleware_options = {}
     # Launch
     puts "Server starting".yellow if ENV['DEBUG']
     instance = Sidekiq::CLI.instance
-    instance.parse(['-r', File.expand_path('environment.rb', File.dirname(__FILE__))])
+    instance.parse(['-r', File.expand_path('test_environment.rb', File.dirname(__FILE__))])
     instance.run
 
   end

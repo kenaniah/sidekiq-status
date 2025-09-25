@@ -1,5 +1,5 @@
 <% require 'cgi'; def h(v); CGI.escape_html(v.to_s); end %>
-<h3>Job Status: <%= h params[:jid] %></h3>
+<h3>Job Status: <%= h safe_url_params("jid") %></h3>
 
 <div role="alert">
   <strong>Uh oh!</strong> That job can't be found. It may have expired already.

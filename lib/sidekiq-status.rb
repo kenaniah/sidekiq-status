@@ -67,19 +67,31 @@ module Sidekiq::Status
       get(job_id, :pct_complete).to_i
     end
 
-    def working_at(job_id)
-      (get(job_id, :working_at) || Time.now).to_i
+    def enqueued_at(job_id)
+      get(job_id, :enqueued_at)&.to_i
     end
 
-    def update_time(job_id)
-      (get(job_id, :update_time) || Time.now).to_i
+    def started_at(job_id)
+      get(job_id, :started_at)&.to_i
+    end
+
+    def updated_at(job_id)
+      # sidekiq-status v3.x and earlier used :update_time
+      get(job_id, :updated_at)&.to_i || get(job_id, :update_time)&.to_i
+    end
+
+    def ended_at(job_id)
+      get(job_id, :ended_at)&.to_i
     end
 
     def eta(job_id)
       at = at(job_id)
       return nil if at.zero?
 
-      (Time.now.to_i - working_at(job_id)).to_f / at * (total(job_id) - at)
+      start_time = started_at(job_id) || enqueued_at(job_id) || updated_at(job_id)
+      elapsed = Time.now.to_i - start_time if start_time
+      return nil unless elapsed
+      elapsed.to_f / at * (total(job_id) - at)
     end
 
     def message(job_id)

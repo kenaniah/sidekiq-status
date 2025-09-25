@@ -1,5 +1,5 @@
 module Sidekiq::Status::Storage
-  RESERVED_FIELDS=%w(status stop update_time).freeze
+  RESERVED_FIELDS=%w(status stop enqueued_at started_at updated_at ended_at).freeze
   BATCH_LIMIT = 500
 
   protected
@@ -15,7 +15,7 @@ module Sidekiq::Status::Storage
     status_updates.transform_values!(&:to_s)
     redis_connection(redis_pool) do |conn|
       conn.multi do |pipeline|
-        pipeline.hset  key(id), 'update_time', Time.now.to_i, *(status_updates.to_a.flatten(1))
+        pipeline.hset  key(id), 'updated_at', Time.now.to_i, *(status_updates.to_a.flatten(1))
         pipeline.expire key(id), (expiration || Sidekiq::Status::DEFAULT_EXPIRY)
         pipeline.publish "status_updates", id
       end[0]
@@ -30,7 +30,16 @@ module Sidekiq::Status::Storage
   # @param [ConnectionPool] redis_pool optional redis connection pool
   # @return [String] Redis operation status code
   def store_status(id, status, expiration = nil, redis_pool=nil)
-    store_for_id id, {status: status}, expiration, redis_pool
+    updates = {status: status}
+    case status.to_sym
+    when :failed, :stopped, :interrupted, :complete
+      updates[:ended_at] = Time.now.to_i
+    when :working
+      updates[:started_at] = Time.now.to_i
+    when :queued
+      updates[:enqueued_at] = Time.now.to_i
+    end
+    store_for_id id, updates, expiration, redis_pool
   end
 
   # Unschedules the job and deletes the Status

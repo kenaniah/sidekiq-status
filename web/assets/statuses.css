@@ -1,0 +1,124 @@
+.progress {
+  background-color: #C8E1ED;
+  border-radius: 8px;
+  height: 100%;
+}
+.progress-bar {
+  display: flex;
+  align-items: center;
+}
+.progress-percentage {
+  padding-left: 6px;
+  color: #333;
+  text-align: left;
+  text-shadow: 0 0 5px white;
+  font-weight: bold;
+}
+.bar {
+  background-color: #2897cb;
+  color: white;
+  text-shadow: 0 0 0;
+}
+.message {
+  text-shadow: 0 0 5px white;
+  font-weight: bold; padding-left: 4px;
+  color: #333;
+}
+.actions {
+  text-align: center;
+}
+.btn-warning {
+  background-image: linear-gradient(#f0ad4e, #eea236)
+}
+.index-header {
+  display: flex;
+  justify-content: space-between;
+}
+.nav-container {
+  display: flex;
+  line-height: 45px;
+}
+.nav-container .pull-right {
+  float: none !important;
+}
+.nav-container .pagination {
+  display: flex;
+  align-items: center;
+}
+.nav-container .per-page, .filter-status {
+  display: flex;
+  align-items: center;
+  margin: 20px 0 20px 10px;
+  white-space: nowrap;
+}
+.nav-container .per-page SELECT {
+  margin: 0 0 0 5px;
+}
+.status-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.status-table th {
+  font-weight: bold;
+  width: 25%;
+  padding: 12px;
+}
+.status-table td {
+  padding: 12px;
+  vertical-align: top;
+}
+.status-table .timestamp {
+  font-family: monospace;
+  font-size: 13px;
+}
+.status-table .multiline {
+  white-space: pre-wrap;
+  font-family: monospace;
+  background-color: #f8f8f8;
+  padding: 8px;
+  border-radius: 3px;
+}
+.label {
+  display: inline-block;
+}
+.label-primary {
+  background-color: #337ab7;
+}
+.center {
+  text-align: center;
+}
+.nowrap {
+  white-space: nowrap;
+}
+.h-30px {
+  height: 30px;
+}
+.mb-0 {
+  margin-bottom: 0;
+}
+.fs-lg {
+  font-size: 1.4em;
+}
+
+/* Dark mode support */
+@media screen and (prefers-color-scheme: dark) {
+  .progress {
+    background-color: #233240;
+  }
+
+  .progress-percentage {
+    color: #ecf0f1;
+    text-shadow: none;
+  }
+
+  .bar {
+    background-color: #3498db;
+    color: #ecf0f1;
+  }
+
+  .message {
+    color: #ecf0f1;
+    text-shadow: none;
+  }
+}
